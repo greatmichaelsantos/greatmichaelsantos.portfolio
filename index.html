@@ -2,19 +2,6 @@
 <html lang="en"><head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<!-- ================================================================
-     PERSONAL PORTFOLIO — single self-contained file.
-     Deploy anywhere (GitHub Pages / Netlify / Vercel): just upload
-     this file as index.html.
-
-     ┌──────────────────────────────────────────────────────────┐
-     │  EVERYTHING YOU NEED TO EDIT IS MARKED WITH "REPLACE".   │
-     │  The two most important knobs are right below:           │
-     │    1. NAME      — your name (drawn on at page load)      │
-     │    2. FACE_SRC  — your photo (halftone hero background)  │
-     └──────────────────────────────────────────────────────────┘
-     ================================================================ -->
 <title>Great Michael Santos</title>
 
 <link rel="icon" type="image/png" href="data:image/png;base64,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">
@@ -709,7 +696,7 @@ footer{
             <b>Data</b> Firebase
           </p>
           <div class="work-links">
-            <span>Developer</span>
+            <span>Lead Developer</span>
             <span>2026</span>
           </div>
         </div>
@@ -789,8 +776,8 @@ footer{
     <div class="contact-links">
       <!-- REPLACE hrefs (mailto:you@example.com, profile URLs) -->
       <a href="mailto:greatmichaelsantos15@gmail.com">Email <span>greatmichaelsantos15@gmail.com</span></a>
-      <a href="#">GitHub <span>add your URL</span></a>
-      <a href="#">LinkedIn <span>add your URL</span></a>
+      <a href="https://github.com/greatmichaelsantos">GitHub <span>https://github.com/greatmichaelsantos</span></a>
+      <a href="https://www.linkedin.com/in/great-michael-santos-7394b3415/">LinkedIn <span>https://www.linkedin.com/in/great-michael-santos-7394b3415/</span></a>
     </div>
   </section>
 
