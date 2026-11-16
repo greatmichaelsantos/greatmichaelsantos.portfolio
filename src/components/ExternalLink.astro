@@ -1,0 +1,18 @@
+---
+// Link that opens in a new tab, with an optional ↗ and a screen-reader note
+// saying so. Extra attributes (class, id, data-*) pass through to the <a>.
+import type { HTMLAttributes } from 'astro/types';
+
+interface Props extends Omit<HTMLAttributes<'a'>, 'target' | 'rel'> {
+  arrow?: boolean;
+  note?: string;
+}
+const { arrow = true, note = '(opens in a new tab)', ...attrs } = Astro.props;
+---
+
+<a {...attrs} target="_blank" rel="noopener noreferrer">
+  <slot />
+  {arrow && ' '}
+  {arrow && <span aria-hidden="true">↗</span>}
+  <span class="sr-only">{note}</span>
+</a>

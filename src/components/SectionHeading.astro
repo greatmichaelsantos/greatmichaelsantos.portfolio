@@ -1,0 +1,13 @@
+---
+// Numbered section heading with a rule, e.g. "01  WORK ────────".
+interface Props {
+  id: string;
+  index: string;
+  title: string;
+}
+const { id, index, title } = Astro.props;
+---
+
+<h2 class="sec-label" id={id}>
+  <span class="n">{index}</span> {title}
+</h2>

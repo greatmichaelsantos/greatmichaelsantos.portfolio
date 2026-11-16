@@ -1,0 +1,49 @@
+---
+// Visible placeholder for copy that still has to be written. Each one is
+// recorded on the page (Astro.locals) so TodoGuard can stop a production build
+// that still contains any. Replace the { todo: ... } entry in the content file
+// with real text to remove it.
+interface Props {
+  hint: string;
+  inline?: boolean;
+}
+const { hint, inline = false } = Astro.props;
+(Astro.locals.todos ??= []).push(hint);
+const Tag = inline ? 'span' : 'div';
+---
+
+<Tag class:list={['todo', { 'todo--inline': inline }]} role="note">
+  <span class="todo__tag">TODO(Kel)</span>
+  <span class="todo__hint">{hint}</span>
+</Tag>
+
+<style>
+  .todo {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 6px 10px;
+    padding: 12px 14px;
+    border: 1px dashed var(--dim);
+    color: var(--soft);
+    font-family: var(--mono);
+    font-size: var(--text-label);
+    line-height: 1.55;
+    text-transform: none;
+    letter-spacing: 0;
+  }
+  .todo--inline {
+    display: inline-flex;
+    padding: 2px 8px;
+    vertical-align: baseline;
+  }
+  .todo__tag {
+    flex-shrink: 0;
+    padding: 1px 6px;
+    background: var(--fg);
+    color: var(--bg);
+    font-size: var(--text-label);
+    font-weight: 700;
+    letter-spacing: 0.04em;
+  }
+</style>

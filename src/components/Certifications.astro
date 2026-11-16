@@ -1,0 +1,28 @@
+---
+import { certificateGroups } from '../data/certifications';
+import { url } from '../lib/url';
+import ExternalLink from './ExternalLink.astro';
+import SectionHeading from './SectionHeading.astro';
+---
+
+<section id="certs" class="reveal" aria-labelledby="certs-h">
+  <SectionHeading id="certs-h" index="04" title="Certifications" />
+  {certificateGroups.map((group) => (
+    <div class="group">
+      <h3>{group.issuer}</h3>
+      <ul class="chips">
+        {group.certificates.map((cert) => (
+          <li>
+            <ExternalLink
+              href={url(`certs/${cert.file}`)}
+              data-cert={`${group.issuer} ${cert.label}`}
+              note="(certificate image, opens in a new tab)"
+            >
+              {cert.label}
+            </ExternalLink>
+          </li>
+        ))}
+      </ul>
+    </div>
+  ))}
+</section>

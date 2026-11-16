@@ -1,0 +1,110 @@
+---
+import Text from './Text.astro';
+import type { CopyValue } from '../../lib/caseStudy';
+
+interface Props {
+  label: string;
+  name: string;
+  background: CopyValue;
+  goals: CopyValue[];
+  frustrations: CopyValue[];
+  statement: CopyValue;
+}
+const { label, name, background, goals, frustrations, statement } = Astro.props;
+---
+
+<div class="persona">
+  <div class="persona__head">
+    <p class="persona__eyebrow">{label}</p>
+    <h4 class="persona__name">{name}</h4>
+    <Text value={background} class="persona__summary" />
+  </div>
+  <div class="persona__cols">
+    <div>
+      <h5>Goals</h5>
+      <ul>
+        {goals.map((g) => (
+          <li>
+            <Text value={g} as="span" />
+          </li>
+        ))}
+      </ul>
+    </div>
+    <div>
+      <h5>Frustrations</h5>
+      <ul>
+        {frustrations.map((f) => (
+          <li>
+            <Text value={f} as="span" />
+          </li>
+        ))}
+      </ul>
+    </div>
+  </div>
+  <div class="persona__statement">
+    <h5>Problem statement</h5>
+    <Text value={statement} />
+  </div>
+</div>
+
+<style>
+  .persona {
+    border: 1px solid var(--fg);
+    padding: clamp(20px, 3vw, 32px);
+    display: grid;
+    gap: 24px;
+  }
+  .persona__eyebrow,
+  h5 {
+    font-size: var(--text-label);
+    font-weight: 400;
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--dim);
+    margin-bottom: 8px;
+  }
+  .persona__name {
+    font-family: var(--grotesque);
+    font-weight: 800;
+    font-size: clamp(22px, 3vw, 30px);
+    text-transform: uppercase;
+  }
+  .persona :global(.persona__summary) {
+    margin-top: 10px;
+    max-width: 68ch;
+    color: var(--soft);
+    font-size: 15px;
+  }
+  .persona__cols {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  @media (min-width: 768px) {
+    .persona__cols {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  ul {
+    list-style: none;
+    display: grid;
+    gap: 8px;
+    font-size: var(--text-small);
+    color: var(--soft);
+  }
+  ul li {
+    padding-left: 18px;
+    position: relative;
+  }
+  ul li::before {
+    content: '—';
+    position: absolute;
+    left: 0;
+    color: var(--dim);
+  }
+  .persona__statement :global(p) {
+    max-width: 68ch;
+    font-size: clamp(16px, 2vw, 19px);
+    line-height: 1.8;
+  }
+</style>

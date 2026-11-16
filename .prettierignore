@@ -1,0 +1,8 @@
+# build output and dependencies
+dist/
+.astro/
+node_modules/
+package-lock.json
+
+# binary/static assets copied as-is
+public/

@@ -1,0 +1,16 @@
+---
+// Fails `astro build` when the page still shows TODO(Kel) placeholders, so
+// unfinished content can't be deployed. Rendered by the layout after the page
+// content, so every <Todo> on the page has already been recorded.
+// Dev mode is unaffected. Override for a one-off build with ALLOW_TODOS=1.
+const todos = Astro.locals.todos ?? [];
+
+if (import.meta.env.PROD && todos.length > 0 && process.env.ALLOW_TODOS !== '1') {
+  const list = todos.map((hint, i) => `  ${i + 1}. ${hint}`).join('\n');
+  throw new Error(
+    `${Astro.url.pathname} still has ${todos.length} TODO(Kel) placeholder(s):\n${list}\n\n` +
+      'Fill them in (src/content/case-studies/*.md) or add the missing images, then build again.\n' +
+      'To build anyway (e.g. to preview a draft), set ALLOW_TODOS=1.',
+  );
+}
+---

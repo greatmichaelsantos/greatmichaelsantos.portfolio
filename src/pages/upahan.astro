@@ -1,0 +1,630 @@
+---
+import { getEntry, render } from 'astro:content';
+import ExternalLink from '../components/ExternalLink.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+import BeforeAfter from '../components/case-study/BeforeAfter.astro';
+import CaseStudyToc from '../components/case-study/CaseStudyToc.astro';
+import CopyList from '../components/case-study/CopyList.astro';
+import DesignStages from '../components/case-study/DesignStages.astro';
+import Figure from '../components/case-study/Figure.astro';
+import JourneyMap from '../components/case-study/JourneyMap.astro';
+import PainPoints from '../components/case-study/PainPoints.astro';
+import Persona from '../components/case-study/Persona.astro';
+import ProcessSteps from '../components/case-study/ProcessSteps.astro';
+import Text from '../components/case-study/Text.astro';
+import { site } from '../data/site';
+import Base from '../layouts/Base.astro';
+import { url } from '../lib/url';
+
+const entry = await getEntry('caseStudies', 'upahan');
+if (!entry) throw new Error('Missing case study: src/content/case-studies/upahan.md');
+const { Content } = await render(entry);
+const cs = entry.data;
+
+// One list drives both the table of contents and the numbered headings.
+const sections = [
+  { id: 'overview', label: 'Overview' },
+  { id: 'problem', label: 'Problem & goal' },
+  { id: 'users', label: 'Target users' },
+  { id: 'team', label: 'My role & the team' },
+  { id: 'process', label: 'Process' },
+  { id: 'designs', label: 'Designs' },
+  { id: 'result', label: 'Final result' },
+  { id: 'lessons', label: 'Lessons & next steps' },
+  { id: 'connect', label: "Let's connect" },
+];
+const heading = (id: string) => {
+  const i = sections.findIndex((s) => s.id === id);
+  return { id: `${id}-h`, index: String(i + 1).padStart(2, '0'), title: sections[i].label };
+};
+const desktopScreens = cs.final.screens.filter((s) => !s.mobile);
+const phoneScreens = cs.final.screens.filter((s) => s.mobile);
+---
+
+<Base title={`${cs.title} Case Study — ${site.name}`} description={cs.description} page="upahan">
+  <div class="cs">
+    <header class="cs-hero">
+      <p class="cs-eyebrow">
+        <span class="cs-tag">Case study</span> Featured software engineering project
+      </p>
+      <h1 class="cs-title">{cs.title}</h1>
+      <p class="cs-tagline">{cs.tagline}</p>
+      <dl class="cs-meta">
+        <div>
+          <dt>Client</dt>
+          <dd>{cs.client}</dd>
+        </div>
+        <div>
+          <dt>Course</dt>
+          <dd>{cs.course}</dd>
+        </div>
+        <div>
+          <dt>Duration</dt>
+          <dd>
+            <Text value={cs.duration} as="span" />
+          </dd>
+        </div>
+        <div>
+          <dt>My role</dt>
+          <dd>
+            <Text value={cs.role} as="span" />
+          </dd>
+        </div>
+        <div>
+          <dt>Team</dt>
+          <dd>
+            <Text value={cs.team} as="span" />
+          </dd>
+        </div>
+      </dl>
+      <div class="cs-actions">
+        <ExternalLink class="btn btn--solid" href={cs.liveUrl}>
+          Live site
+        </ExternalLink>
+        <a class="btn" href={url('#work')}>
+          Back to work
+        </a>
+      </div>
+    </header>
+
+    <div class="cs-layout">
+      <CaseStudyToc items={sections} />
+
+      <div class="cs-body">
+        <section id="overview" aria-labelledby="overview-h">
+          <SectionHeading {...heading('overview')} />
+          <div class="prose">
+            <Content />
+          </div>
+          <Figure figure={cs.preview} eager class="cs-preview" />
+          <div class="cs-cols">
+            <div>
+              <h3>Stack</h3>
+              <dl class="kv">
+                {cs.stack.map(([label, value]) => (
+                  <div>
+                    <dt>{label}</dt>
+                    <dd>{value}</dd>
+                  </div>
+                ))}
+              </dl>
+            </div>
+            <div>
+              <h3>Context</h3>
+              <CopyList items={cs.context} />
+            </div>
+          </div>
+        </section>
+
+        <section id="problem" aria-labelledby="problem-h">
+          <SectionHeading {...heading('problem')} />
+          <div class="cs-cols">
+            <div>
+              <h3>Problem</h3>
+              <Text value={cs.problem.statement} class="lede" />
+            </div>
+            <div>
+              <h3>Goal</h3>
+              <Text value={cs.problem.goal} class="lede" />
+            </div>
+          </div>
+          <h3>Constraints</h3>
+          <CopyList items={cs.problem.constraints} />
+        </section>
+
+        <section id="users" aria-labelledby="users-h">
+          <SectionHeading {...heading('users')} />
+          <Text value={cs.users} class="lede" />
+
+          <h3>Persona</h3>
+          <Persona {...cs.persona} />
+
+          <h3 id="pain-points">Pain points</h3>
+          <PainPoints items={cs.painPoints} />
+
+          <h3>User journey map</h3>
+          <JourneyMap caption={cs.journey.caption} steps={cs.journey.steps} />
+        </section>
+
+        <section id="team" aria-labelledby="team-h">
+          <SectionHeading {...heading('team')} />
+
+          <div class="me">
+            <p class="me__eyebrow">My role</p>
+            <h3 class="me__name">{cs.me.name}</h3>
+            <ul class="me__roles" aria-label="Roles">
+              {cs.me.roles.map((role) => (
+                <li>{role}</li>
+              ))}
+            </ul>
+            <h4>What I did</h4>
+            <CopyList items={cs.me.contributions} />
+          </div>
+
+          <h3>The team</h3>
+          <dl class="kv kv--team">
+            <div>
+              <dt>{cs.me.name} (me)</dt>
+              <dd>
+                <span class="kv__role">{cs.me.roles.join(', ')}</span>
+                <span>Built most of the system, led the v2 redesign and the team.</span>
+              </dd>
+            </div>
+            {cs.teammates.map((member) => (
+              <div>
+                <dt>{member.name}</dt>
+                <dd>
+                  <span class="kv__role">{member.role}</span>
+                  <Text value={member.contribution} as="span" />
+                </dd>
+              </div>
+            ))}
+          </dl>
+
+          <h3>Decisions I made</h3>
+          <ol class="decisions">
+            {cs.decisions.map((decision) => (
+              <li>
+                <a href={decision.href}>{decision.label}</a>
+                <Text value={decision.detail} />
+              </li>
+            ))}
+          </ol>
+        </section>
+
+        <section id="process" aria-labelledby="process-h">
+          <SectionHeading {...heading('process')} />
+          <h3>Timeline</h3>
+          <ProcessSteps steps={cs.process.steps} />
+
+          <h3>First UI: lo-fi to hi-fi</h3>
+          <DesignStages {...cs.process.designs} />
+
+          <h3>Assumptions</h3>
+          <Text value={cs.process.assumptions} class="lede" />
+
+          <h3 id="feedback">Feedback round</h3>
+          <dl class="kv kv--stack">
+            <div>
+              <dt>Panel &amp; client</dt>
+              <dd>
+                <Text value={cs.process.feedback.said} />
+              </dd>
+            </div>
+            <div>
+              <dt>What I changed</dt>
+              <dd>
+                <Text value={cs.process.feedback.changed} />
+              </dd>
+            </div>
+          </dl>
+        </section>
+
+        <section id="designs" aria-labelledby="designs-h">
+          <SectionHeading {...heading('designs')} />
+          <h3>Before &amp; after the redesign</h3>
+          <Text value={cs.beforeAfter.intro} class="lede" />
+          <div class="notes">
+            {cs.beforeAfter.method.map((paragraph) => (
+              <Text value={paragraph} class="note" />
+            ))}
+          </div>
+          {cs.beforeAfter.pairs.map((pair) => (
+            <BeforeAfter {...pair} />
+          ))}
+        </section>
+
+        <section id="result" aria-labelledby="result-h">
+          <SectionHeading {...heading('result')} />
+          <div class="cs-actions cs-actions--flush">
+            <ExternalLink class="btn btn--solid" href={cs.liveUrl}>
+              Visit upahan.vercel.app
+            </ExternalLink>
+          </div>
+
+          <h3>What it does</h3>
+          <CopyList items={cs.final.features} />
+
+          <h3>Final screens</h3>
+          <div class="gallery">
+            {desktopScreens.map((screen) => (
+              <Figure figure={screen} />
+            ))}
+          </div>
+          <div class="gallery gallery--phones">
+            {phoneScreens.map((screen) => (
+              <Figure figure={screen} />
+            ))}
+          </div>
+
+          <h3>Accessibility</h3>
+          <ol class="a11y">
+            {cs.final.accessibility.map((item) => (
+              <li>
+                <h4>{item.title}</h4>
+                <p>{item.detail}</p>
+                <p class="a11y__src">
+                  Source: <code>{item.source}</code>
+                </p>
+              </li>
+            ))}
+          </ol>
+        </section>
+
+        <section id="lessons" aria-labelledby="lessons-h">
+          <SectionHeading {...heading('lessons')} />
+          <div class="cs-cols">
+            <div>
+              <h3>Lessons learned</h3>
+              <CopyList items={cs.lessons} ordered />
+            </div>
+            <div>
+              <h3>Next steps</h3>
+              <CopyList items={cs.nextSteps} ordered />
+            </div>
+          </div>
+        </section>
+
+        <section id="connect" aria-labelledby="connect-h">
+          <SectionHeading {...heading('connect')} />
+          <p class="lede">
+            Thanks for reading. If you'd like to talk about UPahan or a project of your own, get in touch.
+          </p>
+          <div class="cs-actions">
+            <a class="btn btn--solid" href={url('#contact')}>
+              Contact me
+            </a>
+            <a class="btn" href={url('#work')}>
+              See more work
+            </a>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+</Base>
+
+<style>
+  .cs {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 72px 24px 40px;
+  }
+  @media (max-width: 820px) {
+    .cs {
+      padding: 48px 20px 24px;
+    }
+  }
+
+  /* ---- hero ---- */
+  .cs-hero {
+    padding-bottom: 56px;
+    margin-bottom: 56px;
+    border-bottom: 1px solid var(--rule);
+  }
+  .cs-eyebrow {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 14px;
+    font-size: var(--text-label);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--dim);
+  }
+  .cs-tag {
+    padding: 3px 10px;
+    background: var(--fg);
+    color: var(--bg);
+  }
+  .cs-title {
+    margin-top: 18px;
+    font-family: var(--grotesque);
+    font-weight: 900;
+    font-size: clamp(56px, 11vw, 132px);
+    line-height: 0.95;
+    text-transform: uppercase;
+  }
+  .cs-tagline {
+    margin-top: 16px;
+    max-width: 40ch;
+    font-size: clamp(16px, 2.2vw, 22px);
+    color: var(--soft);
+  }
+  .cs-meta {
+    margin-top: 36px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    border-top: 1px solid var(--rule);
+  }
+  .cs-meta > div {
+    padding: 16px 16px 16px 0;
+    border-bottom: 1px solid var(--rule);
+  }
+  .cs-meta dt,
+  .kv dt,
+  .me__eyebrow {
+    font-size: var(--text-label);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--dim);
+    margin-bottom: 6px;
+  }
+  .cs-meta dd {
+    font-size: var(--text-small);
+    line-height: 1.6;
+  }
+  .cs-actions {
+    margin-top: 32px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  .cs-actions--flush {
+    margin-top: 0;
+  }
+
+  /* ---- layout ---- */
+  .cs-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+  }
+  @media (min-width: 1024px) {
+    .cs-layout {
+      grid-template-columns: 200px minmax(0, 1fr);
+      gap: 56px;
+    }
+  }
+  .cs-body section {
+    max-width: none;
+    margin: 0;
+    padding: 0 0 96px;
+    scroll-margin-top: calc(var(--nav-h) + 24px);
+  }
+  @media (max-width: 1023px) {
+    .cs-body section,
+    .cs-body h3[id] {
+      scroll-margin-top: calc(var(--nav-h) + 64px);
+    }
+  }
+  .cs-body :global(.sec-label) {
+    margin-bottom: 36px;
+  }
+  .cs-body h3 {
+    margin: 48px 0 18px;
+    font-family: var(--grotesque);
+    font-weight: 800;
+    font-size: clamp(20px, 2.6vw, 26px);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-title);
+  }
+  .cs-body :global(.sec-label) + h3,
+  .cs-body .cs-cols > div > h3:first-child {
+    margin-top: 0;
+  }
+  .cs-body h4 {
+    margin-bottom: 12px;
+    font-size: var(--text-label);
+    font-weight: 700;
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+  }
+
+  /* ---- text ---- */
+  .prose :global(p) {
+    max-width: 68ch;
+    font-size: clamp(16px, 1.9vw, 18px);
+    line-height: 1.8;
+  }
+  .prose :global(p + p) {
+    margin-top: 1em;
+  }
+  .cs-body :global(.lede) {
+    max-width: 68ch;
+    font-size: clamp(16px, 1.9vw, 18px);
+    line-height: 1.8;
+  }
+  .cs-body :global(.note) {
+    margin-top: 16px;
+    max-width: 72ch;
+    font-size: var(--text-small);
+    line-height: 1.7;
+    color: var(--soft);
+  }
+  .notes {
+    margin-bottom: 28px;
+  }
+  .cs-body a:not(.btn) {
+    text-underline-offset: 4px;
+  }
+  .cs-body :global(.cs-preview) {
+    margin: 36px 0 8px;
+  }
+
+  .cs-cols {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 32px;
+    margin-top: 40px;
+  }
+  @media (min-width: 768px) {
+    .cs-cols {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  h3 + .cs-cols {
+    margin-top: 0;
+  }
+
+  .kv {
+    display: grid;
+    border-top: 1px solid var(--rule);
+  }
+  .kv > div {
+    display: grid;
+    grid-template-columns: 90px minmax(0, 1fr);
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--rule);
+    font-size: var(--text-small);
+  }
+  .kv dt {
+    margin: 0;
+  }
+  .kv--stack > div,
+  .kv--team > div {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+  @media (min-width: 768px) {
+    .kv--stack > div {
+      grid-template-columns: 180px minmax(0, 1fr);
+    }
+    .kv--team > div {
+      grid-template-columns: 220px minmax(0, 1fr);
+    }
+  }
+  .kv--team dt {
+    color: var(--fg);
+    text-transform: none;
+    letter-spacing: 0;
+    font-size: var(--text-small);
+    font-weight: 700;
+  }
+  .kv--team dd {
+    display: grid;
+    gap: 4px;
+    color: var(--soft);
+  }
+  .kv__role {
+    color: var(--fg);
+  }
+  .kv--stack dd :global(p) {
+    max-width: 68ch;
+    line-height: 1.7;
+  }
+
+  /* ---- my role & the team ---- */
+  .me {
+    padding: clamp(20px, 3vw, 32px);
+    border: 1px solid var(--fg);
+  }
+  .cs-body .me__name {
+    margin: 0;
+    font-size: clamp(24px, 3.4vw, 34px);
+  }
+  .me__roles {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 14px 0 24px;
+  }
+  .me__roles li {
+    padding: 4px 12px;
+    border: 1px solid var(--fg);
+    font-size: var(--text-label);
+    letter-spacing: var(--tracking-snug);
+    text-transform: uppercase;
+  }
+  .decisions {
+    list-style: none;
+    display: grid;
+    gap: 12px;
+    counter-reset: d;
+  }
+  .decisions li {
+    counter-increment: d;
+    display: grid;
+    padding: 4px 16px 16px 52px;
+    border: 1px solid var(--rule);
+    position: relative;
+  }
+  .decisions li::before {
+    content: counter(d, decimal-leading-zero);
+    position: absolute;
+    left: 16px;
+    top: 17px;
+    font-size: var(--text-label);
+    color: var(--dim);
+  }
+  .decisions a {
+    justify-self: start;
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    font-weight: 700;
+    font-size: var(--text-small);
+  }
+  .decisions :global(p) {
+    font-size: var(--text-small);
+    line-height: 1.7;
+    color: var(--soft);
+  }
+
+  /* ---- final result ---- */
+  .gallery {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+    align-items: start;
+  }
+  @media (min-width: 768px) {
+    .gallery {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  .gallery--phones {
+    margin-top: 28px;
+    grid-template-columns: repeat(2, minmax(0, 220px));
+  }
+  @media (min-width: 768px) {
+    .gallery--phones {
+      grid-template-columns: repeat(2, minmax(0, 260px));
+    }
+  }
+
+  .a11y {
+    list-style: none;
+    display: grid;
+    gap: 16px;
+  }
+  .a11y > li {
+    padding: 20px;
+    border: 1px solid var(--rule);
+  }
+  .a11y p {
+    font-size: var(--text-small);
+    line-height: 1.7;
+    color: var(--soft);
+  }
+  .a11y__src {
+    margin-top: 10px;
+  }
+  .a11y code {
+    font-family: var(--mono);
+    font-size: var(--text-label);
+    color: var(--fg);
+    overflow-wrap: anywhere;
+  }
+</style>

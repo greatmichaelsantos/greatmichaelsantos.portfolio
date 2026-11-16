@@ -1,0 +1,193 @@
+---
+// In-page table of contents. Desktop: sticky sidebar list. Mobile: a sticky
+// <details> disclosure (collapsible with or without JS). Only one of the two
+// is displayed at a time, so assistive tech sees a single "On this page" nav.
+interface Props {
+  items: { id: string; label: string }[];
+}
+const { items } = Astro.props;
+const pad = (n: number) => String(n).padStart(2, '0');
+---
+
+<nav class="toc toc--desktop" aria-label="On this page">
+  <p class="toc__title">On this page</p>
+  <ol>
+    {items.map((it, i) => (
+      <li>
+        <a href={`#${it.id}`} data-toc-link={it.id}>
+          <span class="toc__n" aria-hidden="true">
+            {pad(i + 1)}
+          </span>{' '}
+          {it.label}
+        </a>
+      </li>
+    ))}
+  </ol>
+</nav>
+
+<nav class="toc toc--mobile" aria-label="On this page">
+  <details>
+    <summary>On this page</summary>
+    <ol>
+      {items.map((it, i) => (
+        <li>
+          <a href={`#${it.id}`} data-toc-link={it.id}>
+            <span class="toc__n" aria-hidden="true">
+              {pad(i + 1)}
+            </span>{' '}
+            {it.label}
+          </a>
+        </li>
+      ))}
+    </ol>
+  </details>
+</nav>
+
+<style>
+  .toc ol {
+    list-style: none;
+  }
+  .toc a {
+    display: flex;
+    gap: 10px;
+    align-items: baseline;
+    min-height: 40px;
+    padding: 8px 0;
+    color: var(--dim);
+    text-decoration: none;
+    font-size: var(--text-label);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .toc a[aria-current='true'] {
+    color: var(--fg);
+    text-decoration: underline;
+    text-underline-offset: 5px;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .toc a:hover {
+      color: var(--fg);
+    }
+  }
+  .toc__n {
+    color: var(--dim);
+    font-size: var(--text-label);
+  }
+  .toc__title {
+    font-size: var(--text-label);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--fg);
+    padding-bottom: 10px;
+    margin-bottom: 4px;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  /* desktop sidebar */
+  .toc--desktop {
+    display: none;
+  }
+  @media (min-width: 1024px) {
+    .toc--desktop {
+      display: block;
+      position: sticky;
+      top: calc(var(--nav-h) + 32px);
+      align-self: start;
+    }
+    .toc--mobile {
+      display: none;
+    }
+  }
+
+  /* mobile disclosure */
+  .toc--mobile {
+    position: sticky;
+    top: var(--nav-h);
+    z-index: 50;
+    margin: 0 -20px 40px;
+    background: var(--bg);
+    border-top: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+  }
+  .toc--mobile summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 48px;
+    padding: 0 20px;
+    cursor: pointer;
+    list-style: none;
+    font-size: var(--text-label);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+  }
+  .toc--mobile summary::-webkit-details-marker {
+    display: none;
+  }
+  .toc--mobile summary::after {
+    content: '+';
+    font-size: 18px;
+  }
+  .toc--mobile details[open] summary::after {
+    content: '−';
+  }
+  .toc--mobile ol {
+    padding: 0 20px 12px;
+    max-height: 60vh;
+    overflow-y: auto;
+  }
+  .toc--mobile a {
+    min-height: 44px;
+    border-top: 1px solid var(--rule);
+  }
+</style>
+
+<script>
+  const links = Array.from(document.querySelectorAll<HTMLAnchorElement>('[data-toc-link]'));
+  const details = document.querySelector<HTMLDetailsElement>('.toc--mobile details');
+
+  // Picking a section on mobile collapses the menu.
+  links.forEach((a) =>
+    a.addEventListener('click', () => {
+      if (details) details.open = false;
+    }),
+  );
+
+  // Mark the section currently in view.
+  const ids = [...new Set(links.map((a) => a.dataset.tocLink!))];
+  const sections = ids.map((id) => document.getElementById(id)).filter((s): s is HTMLElement => !!s);
+  if ('IntersectionObserver' in window && sections.length) {
+    const visible = new Map<string, boolean>();
+    // At the very bottom the last sections can't reach the trigger line, so
+    // the last one wins there.
+    const atBottom = () => window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4;
+    const mark = () => {
+      const current = atBottom() ? ids[ids.length - 1] : ids.find((id) => visible.get(id));
+      links.forEach((a) => {
+        if (a.dataset.tocLink === current) a.setAttribute('aria-current', 'true');
+        else a.removeAttribute('aria-current');
+      });
+    };
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => visible.set(e.target.id, e.isIntersecting));
+        mark();
+      },
+      { rootMargin: '-35% 0px -55% 0px' },
+    );
+    sections.forEach((s) => io.observe(s));
+    let ticking = false;
+    window.addEventListener(
+      'scroll',
+      () => {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(() => {
+          ticking = false;
+          mark();
+        });
+      },
+      { passive: true },
+    );
+  }
+</script>

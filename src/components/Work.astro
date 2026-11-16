@@ -1,0 +1,252 @@
+---
+import { featuredProject as featured, otherProjects } from '../data/projects';
+import ExternalLink from './ExternalLink.astro';
+import SectionHeading from './SectionHeading.astro';
+
+const pad = (n: number) => String(n).padStart(2, '0');
+---
+
+<section id="work" class="reveal" aria-labelledby="work-h">
+  <SectionHeading id="work-h" index="01" title="Work" />
+
+  <article class="featured" aria-labelledby="featured-title">
+    <p class="featured__label">
+      <span class="featured__tag">Featured</span> Software Engineering project
+    </p>
+    <div class="featured__grid">
+      <div>
+        <h3 class="featured__title" id="featured-title">
+          {featured.title}
+        </h3>
+        <p class="featured__client">For {featured.client}</p>
+        <p class="featured__desc">{featured.summary}</p>
+        <div class="featured__actions">
+          <a class="btn btn--solid" href={featured.caseStudyHref}>
+            Read case study <span aria-hidden="true">→</span>
+          </a>
+          <ExternalLink class="btn" href={featured.liveHref}>
+            Live site
+          </ExternalLink>
+        </div>
+      </div>
+      <dl class="featured__facts">
+        <div>
+          <dt>Duration</dt>
+          <dd>{featured.dates}</dd>
+        </div>
+        <div>
+          <dt>My role</dt>
+          <dd>{featured.role}</dd>
+        </div>
+        <div>
+          <dt>Team</dt>
+          <dd>{featured.team}</dd>
+        </div>
+        {featured.stack.map(([label, value]) => (
+          <div>
+            <dt>{label}</dt>
+            <dd>{value}</dd>
+          </div>
+        ))}
+      </dl>
+    </div>
+  </article>
+
+  <ul class="work-list">
+    {otherProjects.map((project, i) => (
+      <li class="work-row">
+        <div class="work-idx" aria-hidden="true">
+          /{pad(i + 2)}
+        </div>
+        <div>
+          <h3 class="work-title">{project.title}</h3>
+          <p class="work-desc">{project.summary}</p>
+        </div>
+        <dl class="stack">
+          {project.stack.map(([label, value]) => (
+            <div>
+              <dt>{label}</dt>
+              <dd>{value}</dd>
+            </div>
+          ))}
+        </dl>
+        <div class="work-meta">
+          {project.liveHref && <ExternalLink href={project.liveHref}>Live</ExternalLink>}
+          {project.notes?.map((note) => (
+            <span>{note}</span>
+          ))}
+          {project.role && <span>My role: {project.role}</span>}
+          {project.team && <span>Team: {project.team}</span>}
+          {project.dates && <span>{project.dates}</span>}
+        </div>
+      </li>
+    ))}
+  </ul>
+</section>
+
+<style>
+  /* ---- featured card ---- */
+  .featured {
+    border: 1px solid var(--fg);
+    padding: clamp(24px, 4vw, 44px);
+    margin-bottom: 48px;
+    background: rgba(0, 0, 0, 0.6);
+  }
+  .featured__label {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 12px;
+    font-size: var(--text-label);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--dim);
+    margin-bottom: 24px;
+  }
+  .featured__tag {
+    padding: 3px 10px;
+    background: var(--fg);
+    color: var(--bg);
+    font-weight: 700;
+  }
+  .featured__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+  @media (min-width: 900px) {
+    .featured__grid {
+      grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+      gap: 48px;
+    }
+  }
+  .featured__title {
+    font-family: var(--grotesque);
+    font-weight: 900;
+    font-size: clamp(40px, 7vw, 76px);
+    line-height: 0.95;
+    text-transform: uppercase;
+  }
+  .featured__client {
+    margin-top: 14px;
+    font-size: var(--text-small);
+    color: var(--soft);
+  }
+  .featured__desc {
+    margin-top: 16px;
+    max-width: 56ch;
+    font-size: 15px;
+    line-height: 1.75;
+    color: var(--soft);
+  }
+  .featured__actions {
+    margin-top: 28px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+  }
+  .featured__facts {
+    align-self: start;
+    border-top: 1px solid var(--rule);
+  }
+  .featured__facts > div {
+    display: grid;
+    grid-template-columns: 96px minmax(0, 1fr);
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--rule);
+    font-size: var(--text-small);
+  }
+  .featured__facts dt {
+    font-size: var(--text-label);
+    letter-spacing: var(--tracking-meta);
+    text-transform: uppercase;
+    color: var(--dim);
+  }
+
+  /* ---- other projects ---- */
+  .work-list {
+    list-style: none;
+    border-top: 1px solid var(--rule);
+  }
+  .work-row {
+    border-bottom: 1px solid var(--rule);
+    display: grid;
+    grid-template-columns: 64px 1fr 260px 190px;
+    gap: 24px;
+    align-items: center;
+    padding: 32px 16px;
+  }
+  .work-idx {
+    font-size: var(--text-label);
+    color: var(--dim);
+  }
+  .work-title {
+    font-family: var(--grotesque);
+    font-weight: 800;
+    font-size: clamp(20px, 2.6vw, 28px);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-title);
+    line-height: 1.15;
+  }
+  .work-desc {
+    margin-top: 6px;
+    font-size: var(--text-small);
+    color: var(--dim);
+  }
+  .stack {
+    font-size: var(--text-label);
+    line-height: 1.9;
+    color: var(--soft);
+  }
+  .stack div {
+    display: flex;
+  }
+  .stack dt {
+    color: var(--dim);
+    flex: 0 0 10ch;
+  }
+  .work-meta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    font-size: var(--text-label);
+    letter-spacing: var(--tracking-meta);
+    text-transform: uppercase;
+  }
+  .work-meta a {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 32px;
+    padding: 4px 10px;
+    margin-left: -10px;
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 5px;
+    transition:
+      background 0.15s ease,
+      color 0.15s ease;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .work-meta a:hover {
+      background: var(--fg);
+      color: var(--bg);
+    }
+  }
+
+  @media (max-width: 820px) {
+    .work-row {
+      grid-template-columns: 1fr;
+      gap: 14px;
+      padding: 28px 12px;
+    }
+    .work-meta {
+      flex-direction: row;
+      flex-wrap: wrap;
+      align-items: center;
+      column-gap: 24px;
+    }
+  }
+</style>

@@ -1,0 +1,52 @@
+---
+// A list of case-study copy items (bulleted with a dash, or numbered 01, 02…).
+import type { CopyValue } from '../../lib/caseStudy';
+import Text from './Text.astro';
+
+interface Props {
+  items: CopyValue[];
+  ordered?: boolean;
+}
+const { items, ordered = false } = Astro.props;
+const Tag = ordered ? 'ol' : 'ul';
+---
+
+<Tag class:list={['list', { 'list--num': ordered }]}>
+  {items.map((item) => (
+    <li>
+      <Text value={item} as="span" />
+    </li>
+  ))}
+</Tag>
+
+<style>
+  .list {
+    list-style: none;
+    display: grid;
+    gap: 10px;
+    font-size: var(--text-small);
+    line-height: 1.7;
+    color: var(--soft);
+  }
+  .list > li {
+    padding-left: 18px;
+    position: relative;
+  }
+  .list > li::before {
+    content: '—';
+    position: absolute;
+    left: 0;
+    color: var(--dim);
+  }
+  .list--num {
+    counter-reset: n;
+  }
+  .list--num > li {
+    counter-increment: n;
+    padding-left: 30px;
+  }
+  .list--num > li::before {
+    content: counter(n, decimal-leading-zero);
+    font-size: var(--text-label);
+  }
+</style>

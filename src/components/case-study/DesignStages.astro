@@ -1,0 +1,99 @@
+---
+// Lo-fi → hi-fi comparison: one column per screen, low fidelity above high
+// fidelity. Three columns side by side from 768px; on phones each screen
+// stacks into its own column. Every image links to its full-size file.
+import Figure from './Figure.astro';
+import Text from './Text.astro';
+import type { CopyValue, FigureData } from '../../lib/caseStudy';
+
+interface Props {
+  caption: string;
+  screens: { name: string; lofi: FigureData; hifi: FigureData; note?: CopyValue }[];
+}
+const { caption, screens } = Astro.props;
+const stages = [
+  { key: 'lofi', label: 'Lo-fi' },
+  { key: 'hifi', label: 'Hi-fi' },
+] as const;
+---
+
+<figure class="stages">
+  <ul class="stages__grid">
+    {screens.map((screen) => (
+      <li class="stages__screen">
+        <h4 class="stages__name">{screen.name}</h4>
+        {stages.map((stage) => (
+          <div class="stages__item">
+            <p class:list={['stages__label', `stages__label--${stage.key}`]}>{stage.label}</p>
+            <Figure figure={screen[stage.key]} zoom />
+          </div>
+        ))}
+        {screen.note && <Text value={screen.note} class="stages__note" />}
+      </li>
+    ))}
+  </ul>
+  <figcaption class="stages__caption">{caption}</figcaption>
+</figure>
+
+<style>
+  .stages {
+    margin: 0;
+  }
+  .stages__grid {
+    list-style: none;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+  .stages__screen {
+    display: grid;
+    gap: 16px;
+    align-content: start;
+    max-width: 300px;
+  }
+  /* Side by side, each column shares the parent's rows (name, lo-fi, hi-fi,
+     note) so the images line up even when a screen name wraps. */
+  @media (min-width: 768px) {
+    .stages__grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-rows: repeat(4, auto);
+      gap: 16px 20px;
+    }
+    .stages__screen {
+      max-width: none;
+      grid-row: span 4;
+      grid-template-rows: subgrid;
+    }
+  }
+  .stages__name {
+    font-family: var(--grotesque);
+    font-weight: 800;
+    font-size: clamp(15px, 1.8vw, 18px);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-title);
+  }
+  .stages__label {
+    display: inline-block;
+    margin-bottom: 8px;
+    padding: 3px 10px;
+    border: 1px solid var(--fg);
+    font-size: var(--text-label);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+  }
+  .stages__label--hifi {
+    background: var(--fg);
+    color: var(--bg);
+  }
+  .stages :global(.stages__note) {
+    font-size: var(--text-small);
+    line-height: 1.7;
+    color: var(--soft);
+  }
+  .stages__caption {
+    margin-top: 20px;
+    font-size: var(--text-label);
+    line-height: 1.6;
+    color: var(--dim);
+  }
+</style>

@@ -1,0 +1,72 @@
+---
+import '@fontsource/archivo/800.css';
+import '@fontsource/archivo/900.css';
+import '@fontsource/jetbrains-mono/400.css';
+import '@fontsource/jetbrains-mono/500.css';
+import '@fontsource/jetbrains-mono/700.css';
+import '../styles/global.css';
+
+import Constellation from '../components/Constellation.astro';
+import Footer from '../components/Footer.astro';
+import Nav from '../components/Nav.astro';
+import TodoGuard from '../components/TodoGuard.astro';
+import type { PageKey } from '../data/navigation';
+import { site } from '../data/site';
+import { url } from '../lib/url';
+
+interface Props {
+  title: string;
+  description?: string;
+  page?: PageKey;
+  /** Keep the page out of search results (e.g. the 404 page). */
+  noindex?: boolean;
+}
+
+const { title, description = site.description, page = 'home', noindex = false } = Astro.props;
+
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    {noindex ? <meta name="robots" content="noindex" /> : <link rel="canonical" href={canonical} />}
+    <link rel="icon" type="image/png" href={url('favicon.png')} />
+    <link rel="apple-touch-icon" href={url('favicon.png')} />
+    <meta name="theme-color" content="#000000" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    {/* TODO(Kel): add a 1200x630 share image (e.g. public/og.png) and an og:image tag pointing to it */}
+    <meta name="twitter:card" content="summary" />
+
+    <script is:inline>
+      // Flags that JS is running so reveal animations can hide content first.
+      // Without JS this never runs and everything is visible.
+      document.documentElement.classList.add('js');
+      // Failsafe: never leave content hidden if the page scripts fail to load.
+      setTimeout(function () {
+        if (document.body) document.body.classList.add('revealed', 'name-filled');
+      }, 4000);
+    </script>
+  </head>
+  <body id="top" class={page === 'home' ? undefined : 'revealed name-filled'}>
+    <a class="skip-link" href="#main">
+      Skip to content
+    </a>
+    <Constellation />
+    <Nav page={page} />
+    <main id="main" tabindex="-1">
+      <slot />
+    </main>
+    <TodoGuard />
+    <Footer />
+  </body>
+</html>

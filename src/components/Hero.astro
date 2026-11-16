@@ -1,0 +1,681 @@
+---
+import { site } from '../data/site';
+import { url } from '../lib/url';
+
+const NAME = site.name.toUpperCase();
+// Static fit for the 150px Archivo 900 name inside the 1000-wide viewBox,
+// so the name is sized correctly even without JS. The script re-measures.
+const NAME_FIT = 'translate(500 95) scale(0.450) translate(-500 -95)';
+const portrait = url('img/portrait.jpg');
+---
+
+<header class="hero">
+  <canvas id="halftone" aria-hidden="true" data-src={portrait}></canvas>
+  <div class="hero-vignette" aria-hidden="true"></div>
+  <div id="dragCursor" aria-hidden="true"></div>
+
+  <div class="hero-inner">
+    {/* Mobile only: reserves the space the halftone face is drawn into, so
+        the name and text stack below it instead of over it. */}
+    <div class="hero-face" aria-hidden="true" style={`--portrait: url('${portrait}')`}></div>
+    <h1 class="hero-name" id="hero-name">
+      <span class="sr-only">{site.name}</span>
+      <svg id="nameSvg" viewBox="0 0 1000 190" aria-hidden="true" focusable="false">
+        <text x="500" y="50%" text-anchor="middle" dominant-baseline="central" transform={NAME_FIT}>
+          {[...NAME].map((ch) => (ch === ' ' ? <tspan class="sp">{' '}</tspan> : <tspan>{ch}</tspan>))}
+        </text>
+      </svg>
+    </h1>
+
+    <div class="hero-copy reveal">
+      <p class="hero-role">{site.role}</p>
+      <p class="hero-pitch">{site.pitch}</p>
+      <p class="hero-learning">Currently learning — {site.currentlyLearning}</p>
+      <div class="hero-actions">
+        <a class="btn" href="#work">
+          Work
+        </a>
+        <a class="btn" href="#contact">
+          Contact
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="scroll-hint reveal" aria-hidden="true">
+    Scroll ↓
+  </div>
+</header>
+
+<style>
+  .hero {
+    position: relative;
+    min-height: calc(100svh - var(--nav-h));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+  #halftone {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+    z-index: 1;
+    pointer-events: none;
+  }
+  /* soft dark vignette so the name stays readable over the dots */
+  .hero-vignette {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    background: radial-gradient(
+      ellipse 62% 55% at 50% 52%,
+      rgba(0, 0, 0, 0.78) 0%,
+      rgba(0, 0, 0, 0.45) 55%,
+      rgba(0, 0, 0, 0) 100%
+    );
+    pointer-events: none;
+  }
+  .hero-inner {
+    position: relative;
+    z-index: 3;
+    text-align: center;
+    padding: 48px 24px;
+    max-width: 1240px;
+    width: 100%;
+  }
+
+  /* ---- name (SVG text, rendered at build time) ---- */
+  .hero-name {
+    margin: 0;
+    font-size: inherit;
+  }
+  #nameSvg {
+    width: min(940px, 90vw);
+    height: auto;
+    display: block;
+    margin: 0 auto;
+    overflow: visible;
+  }
+  #nameSvg text {
+    font-family: var(--grotesque);
+    font-weight: 900;
+    font-size: 150px;
+    letter-spacing: 0;
+    fill: var(--fg);
+  }
+  /* With JS the letters start as outlines and get drawn on. */
+  :global(.js) #nameSvg text {
+    fill: transparent;
+    stroke: var(--fg);
+    stroke-width: 1.5;
+  }
+  #nameSvg tspan {
+    transition: fill 0.8s ease;
+  }
+  :global(.js body.name-filled) #nameSvg tspan {
+    fill: var(--fg);
+  }
+
+  /* ---- copy block: no backing box. A layered black halo keeps each text
+     line readable over the dots while the face stays visible around it. ---- */
+  .hero-copy {
+    max-width: 100%;
+    margin-top: 20px;
+  }
+  .hero-role,
+  .hero-pitch,
+  .hero-learning {
+    text-shadow:
+      0 0 4px #000,
+      0 0 12px #000,
+      0 0 24px rgba(0, 0, 0, 0.8);
+  }
+  .hero-face {
+    display: none;
+  }
+  .hero-role {
+    font-size: clamp(13px, 1.6vw, 16px);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+  .hero-pitch {
+    margin: 16px auto 0;
+    max-width: 52ch;
+    font-size: clamp(14px, 1.7vw, 17px);
+    color: var(--dim);
+  }
+  .hero-learning {
+    margin-top: 14px;
+    font-size: var(--text-label);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--dim);
+  }
+  .hero-actions {
+    margin-top: 28px;
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .hero-actions .btn {
+    background: #000;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .hero-actions .btn:hover {
+      background: var(--fg);
+      color: var(--bg);
+    }
+  }
+
+  .scroll-hint {
+    position: absolute;
+    bottom: 22px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: var(--text-label);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--dim);
+    z-index: 3;
+  }
+
+  /* ---- touch-only drag handle for the interactive background ---- */
+  #dragCursor {
+    position: absolute;
+    z-index: 4;
+    top: 15%;
+    left: 50%;
+    width: 64px;
+    height: 64px;
+    margin: -32px 0 0 -32px;
+    border: 1.5px solid var(--fg);
+    border-radius: 50%;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    color: var(--fg);
+    background: rgba(0, 0, 0, 0.28);
+    backdrop-filter: blur(1px);
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    animation: dragpulse 2.2s ease-in-out infinite;
+  }
+  #dragCursor::after {
+    content: 'DRAG';
+    font-family: var(--mono);
+    font-size: var(--text-label);
+    letter-spacing: 0.06em;
+  }
+  @keyframes dragpulse {
+    0%,
+    100% {
+      box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.28);
+    }
+    50% {
+      box-shadow: 0 0 0 9px rgba(255, 255, 255, 0);
+    }
+  }
+  @media (hover: none) and (pointer: coarse) {
+    :global(.js) #dragCursor {
+      display: flex;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    #dragCursor {
+      animation: none;
+    }
+  }
+
+  /* Mobile: stack instead of overlap. The face is drawn into .hero-face
+     (see rebuild() in the script); name, text and buttons sit below it. */
+  @media (max-width: 820px) {
+    .hero {
+      align-items: flex-start;
+    }
+    .hero-vignette {
+      display: none;
+    }
+    .hero-inner {
+      padding: 20px 20px 84px;
+    }
+    .hero-face {
+      display: block;
+      height: min(92vw, 700px);
+      margin-bottom: 4px;
+    }
+    /* No JS: show the photo itself in the face area instead of a blank space. */
+    :global(html:not(.js)) .hero-face {
+      background-image: var(--portrait);
+      background-repeat: no-repeat;
+      background-size: auto 133%;
+      background-position: 50% 12%;
+      filter: grayscale(1);
+    }
+    :global(.js) #nameSvg text {
+      stroke-width: 2;
+    }
+    .hero-copy {
+      margin-top: 14px;
+    }
+  }
+  /* Tablet portrait: a shorter face so the buttons fit above the fold at 768×1024. */
+  @media (min-width: 768px) and (max-width: 820px) {
+    .hero-face {
+      height: 560px;
+    }
+  }
+</style>
+
+<script>
+  const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---------- Name draw-on (SVG stroke animation) ----------
+     Each letter is stroked with a dasharray longer than its outline;
+     animating dashoffset to 0 traces it on. Fills fade in afterwards
+     and the rest of the page is revealed. */
+  const svgText = document.querySelector<SVGTextElement>('#nameSvg text');
+  const letters = Array.from(document.querySelectorAll<SVGTSpanElement>('#nameSvg tspan:not(.sp)'));
+
+  const fitName = () => {
+    if (!svgText) return;
+    try {
+      const w = svgText.getComputedTextLength();
+      if (w > 0) {
+        svgText.setAttribute(
+          'transform',
+          'translate(500 95) scale(' + (940 / w).toFixed(3) + ') translate(-500 -95)',
+        );
+      }
+    } catch {
+      /* keep the static fit */
+    }
+  };
+
+  const reveal = () => document.body.classList.add('revealed', 'name-filled');
+
+  if (svgText) {
+    requestAnimationFrame(fitName);
+
+    if (REDUCED) {
+      fitName();
+      svgText.style.stroke = 'none';
+      letters.forEach((t) => (t.style.fill = '#fff'));
+      reveal();
+    } else {
+      const DASH = 620; // longer than any glyph outline at 150px
+      const PER = 0.55; // seconds per letter
+      const STEP = Math.min(0.13, 1.2 / Math.max(letters.length, 1));
+      letters.forEach((t) => {
+        t.style.strokeDasharray = String(DASH);
+        t.style.strokeDashoffset = String(DASH);
+      });
+
+      const fontsReady = new Promise<void>((resolve) => {
+        let done = false;
+        const finish = () => {
+          if (!done) {
+            done = true;
+            resolve();
+          }
+        };
+        try {
+          document.fonts?.ready.then(finish, finish);
+          document.fonts?.load('900 150px Archivo').then(finish, finish);
+        } catch {
+          /* fall through to the timer */
+        }
+        setTimeout(finish, 1200);
+      });
+
+      fontsReady.then(() => {
+        requestAnimationFrame(() => {
+          fitName();
+          void svgText.getBBox(); // force layout so the hidden state is painted first
+          letters.forEach((t, i) => {
+            t.style.transition = 'stroke-dashoffset ' + PER + 's ease ' + i * STEP + 's';
+          });
+          requestAnimationFrame(() =>
+            requestAnimationFrame(() => {
+              letters.forEach((t) => (t.style.strokeDashoffset = '0'));
+            }),
+          );
+          const total = (letters.length - 1) * STEP + PER;
+          setTimeout(reveal, Math.min(total, 2.2) * 1000);
+        });
+      });
+      setTimeout(reveal, 3200);
+    }
+  } else {
+    reveal();
+  }
+
+  /* ---------- Interactive halftone portrait ----------
+     The photo is fitted onto a tiny offscreen canvas with one pixel per
+     grid cell; each cell becomes a white dot sized by brightness. Dots
+     fly in from off-screen, breathe slowly, and swell / push away from
+     the pointer. Static render under reduced motion. */
+  const hero = document.querySelector<HTMLElement>('.hero');
+  const canvas = document.getElementById('halftone') as HTMLCanvasElement | null;
+  const ctx = canvas?.getContext('2d');
+
+  if (hero && canvas && ctx && canvas.dataset.src) {
+    const DPR = Math.min(window.devicePixelRatio || 1, 2);
+    const FACE_ZOOM = 0.95; // 1 = whole photo fits; <1 adds margin
+    const INTRO_STAGGER = 3840; // ms over which dots start arriving
+    const INTRO_DUR = 780; // ms for each dot to arrive
+    const INTRO_SLIDE = 0.9; // how far off-screen dots start, as a fraction of the screen
+    const INFLUENCE = 150; // pointer radius, px
+
+    // dim: alpha multiplier, < 1 for dots directly under a hero text line.
+    type Dot = { x: number; y: number; r0: number; a0: number; phase: number; delay: number; dim: number };
+
+    /* Desktop overlays the text on the face. The black text-shadow halo alone
+       isn't enough for the dimmer lines (measured ~3.5–4.3:1 over the
+       brightest dots), so dots directly under each text line are dimmed, with
+       a soft edge, to keep body text at WCAG AA (≥4.5:1). */
+    const TEXT_LINES = ['.hero-role', '.hero-pitch', '.hero-learning'];
+    const DIM_PAD_X = 10;
+    const DIM_PAD_Y = 6;
+    const DIM_FEATHER = 10;
+    const DIM_MIN = 0.22;
+    let lineRects: { l: number; t: number; r: number; b: number }[] = [];
+    const measureLines = () => {
+      const hr = hero.getBoundingClientRect();
+      lineRects = [];
+      for (const sel of TEXT_LINES) {
+        const el = hero.querySelector(sel);
+        if (!el) continue;
+        const range = document.createRange();
+        range.selectNodeContents(el);
+        for (const r of Array.from(range.getClientRects())) {
+          if (r.width < 1) continue;
+          lineRects.push({
+            l: r.left - hr.left - DIM_PAD_X,
+            t: r.top - hr.top - DIM_PAD_Y,
+            r: r.right - hr.left + DIM_PAD_X,
+            b: r.bottom - hr.top + DIM_PAD_Y,
+          });
+        }
+      }
+    };
+    const dimAt = (x: number, y: number) => {
+      let dim = 1;
+      for (const q of lineRects) {
+        const dx = Math.max(q.l - x, 0, x - q.r);
+        const dy = Math.max(q.t - y, 0, y - q.b);
+        const dist = Math.hypot(dx, dy);
+        if (dist >= DIM_FEATHER) continue;
+        const k = DIM_MIN + (1 - DIM_MIN) * (dist / DIM_FEATHER);
+        if (k < dim) dim = k;
+      }
+      return dim;
+    };
+    let W = 0;
+    let H = 0;
+    let GAP = 10;
+    let introStart = 0;
+    let dots: Dot[] = [];
+    let source: HTMLImageElement | null = null;
+    const mouse = { x: -9999, y: -9999, tx: -9999, ty: -9999 };
+    let rafId: number | null = null;
+
+    const drawStatic = () => {
+      ctx.clearRect(0, 0, W, H);
+      ctx.fillStyle = '#fff';
+      for (const d of dots) {
+        ctx.globalAlpha = d.a0 * d.dim;
+        ctx.beginPath();
+        ctx.arc(d.x, d.y, d.r0, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.globalAlpha = 1;
+    };
+
+    const frame = (t: number) => {
+      rafId = requestAnimationFrame(frame);
+      mouse.x += (mouse.tx - mouse.x) * 0.14;
+      mouse.y += (mouse.ty - mouse.y) * 0.14;
+
+      ctx.clearRect(0, 0, W, H);
+      ctx.fillStyle = '#fff';
+      const time = t * 0.0011;
+      const R2 = INFLUENCE * INFLUENCE;
+      if (!introStart) introStart = t;
+      const elapsed = t - introStart;
+
+      for (const d of dots) {
+        let p = (elapsed - d.delay) / INTRO_DUR;
+        if (p <= 0) continue;
+        p = p < 1 ? p * p * (3 - 2 * p) : 1;
+        let r = d.r0 * (1 + 0.14 * Math.sin(time + d.phase));
+        let a = d.a0;
+        let x = d.x;
+        let y = d.y;
+
+        const dx = d.x - mouse.x;
+        const dy = d.y - mouse.y;
+        const dist2 = dx * dx + dy * dy;
+        if (dist2 < R2) {
+          const dist = Math.sqrt(dist2);
+          let f = 1 - dist / INFLUENCE;
+          f = f * f * (3 - 2 * f);
+          r += f * GAP * 0.42;
+          a = Math.min(1, a + f * 0.75);
+          if (dist > 0.5) {
+            const push = f * 7;
+            x += (dx / dist) * push;
+            y += (dy / dist) * push;
+          }
+        }
+        const rev = 0.35 + 0.65 * p;
+        const ox = d.x - W * 0.5;
+        const oy = d.y - H * 0.5;
+        const ol = Math.sqrt(ox * ox + oy * oy) || 1;
+        const reach = ol + Math.max(W, H) * INTRO_SLIDE;
+        const startX = W * 0.5 + (ox / ol) * reach;
+        const startY = H * 0.5 + (oy / ol) * reach;
+        x += (startX - x) * (1 - p);
+        y += (startY - y) * (1 - p);
+        ctx.globalAlpha = a * rev * d.dim; // dimmed after the pointer brightening
+        ctx.beginPath();
+        ctx.arc(x, y, r * rev, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.globalAlpha = 1;
+    };
+
+    const startLoop = () => {
+      if (rafId) cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(frame);
+    };
+
+    const rebuild = () => {
+      if (!source) return;
+      W = hero.clientWidth;
+      H = hero.clientHeight;
+      canvas.width = Math.round(W * DPR);
+      canvas.height = Math.round(H * DPR);
+      ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+
+      // Mobile stacks the face above the text: .hero-face is visible and marks
+      // the area to draw into. Desktop overlays the text on a full-hero face.
+      const faceBox = hero.querySelector<HTMLElement>('.hero-face');
+      const stacked = !!faceBox && getComputedStyle(faceBox).display !== 'none';
+
+      GAP = stacked ? 5.5 : W < 700 ? 10 : 7.8;
+      const cols = Math.ceil(W / GAP);
+      const rows = Math.ceil(H / GAP);
+
+      const oc = document.createElement('canvas');
+      oc.width = cols;
+      oc.height = rows;
+      const og = oc.getContext('2d', { willReadFrequently: true });
+      if (!og) return;
+      og.fillStyle = '#000';
+      og.fillRect(0, 0, cols, rows);
+      const sw = source.naturalWidth;
+      const sh = source.naturalHeight;
+      if (stacked && faceBox) {
+        // The head fills ~35% of the photo's width and its top ~75% of its
+        // height, so scale the photo until that part fills the face box
+        // (about 60% of the screen width), then clip and fade at the bottom.
+        const top = (faceBox.getBoundingClientRect().top - hero.getBoundingClientRect().top) / GAP;
+        const boxH = faceBox.offsetHeight / GAP;
+        const dh = boxH / 0.75;
+        const dw = dh * (sw / sh);
+        og.save();
+        og.beginPath();
+        og.rect(0, top, cols, boxH);
+        og.clip();
+        og.drawImage(source, (cols - dw) / 2, top - 0.03 * dh, dw, dh);
+        og.restore();
+        const fade = og.createLinearGradient(0, top + boxH * 0.78, 0, top + boxH);
+        fade.addColorStop(0, 'rgba(0,0,0,0)');
+        fade.addColorStop(1, 'rgba(0,0,0,1)');
+        og.fillStyle = fade;
+        og.fillRect(0, top + boxH * 0.78, cols, boxH * 0.22 + 1);
+      } else {
+        const s = Math.min(cols / sw, rows / sh) * FACE_ZOOM;
+        og.drawImage(source, (cols - sw * s) / 2, (rows - sh * s) / 2, sw * s, sh * s);
+      }
+
+      let data: Uint8ClampedArray;
+      try {
+        data = og.getImageData(0, 0, cols, rows).data;
+      } catch {
+        return;
+      }
+
+      // Text is stacked below the face on mobile, so only desktop needs this.
+      if (stacked) lineRects = [];
+      else measureLines();
+
+      const maxR = GAP * 0.5;
+      dots = [];
+      for (let j = 0; j < rows; j++) {
+        for (let i = 0; i < cols; i++) {
+          const k = (j * cols + i) * 4;
+          let b = (0.2126 * data[k] + 0.7152 * data[k + 1] + 0.0722 * data[k + 2]) / 255;
+          // contrast so features read; the smaller phone face gets more of it
+          b = Math.min(1, Math.max(0, (b - 0.5) * (stacked ? 1.55 : 1.2) + 0.5));
+          const r0 = maxR * b;
+          if (r0 < 0.26) continue;
+          dots.push({
+            x: i * GAP + GAP / 2,
+            y: j * GAP + GAP / 2,
+            r0,
+            a0: stacked ? Math.min(1, 0.42 + 0.58 * b) : 0.36 + 0.6 * b,
+            phase: (i * 0.7 + j * 1.3) % (Math.PI * 2),
+            delay: Math.random() * INTRO_STAGGER,
+            dim: lineRects.length ? dimAt(i * GAP + GAP / 2, j * GAP + GAP / 2) : 1,
+          });
+        }
+      }
+      if (REDUCED) drawStatic();
+      else startLoop();
+    };
+
+    const img = new Image();
+    img.onload = () => {
+      source = img;
+      rebuild();
+    };
+    img.src = canvas.dataset.src;
+    // Line boxes (for the dimming) depend on the web font; re-measure once it's in.
+    document.fonts?.ready.then(() => {
+      if (source) rebuild();
+    });
+
+    hero.addEventListener('pointermove', (e) => {
+      const rect = hero.getBoundingClientRect();
+      mouse.tx = e.clientX - rect.left;
+      mouse.ty = e.clientY - rect.top;
+    });
+    hero.addEventListener('pointerleave', () => {
+      mouse.tx = -9999;
+      mouse.ty = -9999;
+    });
+
+    // Pause while the hero is off-screen or the tab is hidden.
+    if ('IntersectionObserver' in window && !REDUCED) {
+      new IntersectionObserver(
+        (entries) => {
+          for (const en of entries) {
+            if (en.isIntersecting) {
+              if (!rafId && source) startLoop();
+            } else if (rafId) {
+              cancelAnimationFrame(rafId);
+              rafId = null;
+            }
+          }
+        },
+        { threshold: 0.02 },
+      ).observe(hero);
+    }
+    document.addEventListener('visibilitychange', () => {
+      if (REDUCED) return;
+      if (document.hidden) {
+        if (rafId) {
+          cancelAnimationFrame(rafId);
+          rafId = null;
+        }
+      } else if (source) startLoop();
+    });
+
+    let resizeT: number | undefined;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeT);
+      resizeT = window.setTimeout(rebuild, 150);
+    });
+
+    /* ---------- Touch drag handle ----------
+       Phones have no hover, so this puck lets a finger sweep the
+       background; it forwards synthetic pointermoves to the hero
+       (halftone) and window (constellation). */
+    const puck = document.getElementById('dragCursor');
+    if (puck) {
+      let dragging = false;
+      const drive = (clientX: number, clientY: number) => {
+        const r = hero.getBoundingClientRect();
+        const x = Math.max(r.left, Math.min(r.right, clientX));
+        const y = Math.max(r.top, Math.min(r.bottom, clientY));
+        puck.style.left = x - r.left + 'px';
+        puck.style.top = y - r.top + 'px';
+        hero.dispatchEvent(new PointerEvent('pointermove', { clientX: x, clientY: y, bubbles: true }));
+      };
+      puck.addEventListener('pointerdown', (e) => {
+        dragging = true;
+        puck.style.animation = 'none';
+        try {
+          puck.setPointerCapture(e.pointerId);
+        } catch {
+          /* ignore */
+        }
+        drive(e.clientX, e.clientY);
+        e.preventDefault();
+      });
+      puck.addEventListener('pointermove', (e) => {
+        if (dragging) {
+          drive(e.clientX, e.clientY);
+          e.preventDefault();
+        }
+      });
+      const end = (e: PointerEvent) => {
+        dragging = false;
+        try {
+          puck.releasePointerCapture(e.pointerId);
+        } catch {
+          /* ignore */
+        }
+      };
+      puck.addEventListener('pointerup', end);
+      puck.addEventListener('pointercancel', end);
+    }
+  }
+</script>

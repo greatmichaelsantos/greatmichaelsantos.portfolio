@@ -1,0 +1,77 @@
+---
+import { contactLinks } from '../data/contact';
+import ExternalLink from './ExternalLink.astro';
+import SectionHeading from './SectionHeading.astro';
+---
+
+<section id="contact" class="reveal" aria-labelledby="contact-h">
+  <SectionHeading id="contact-h" index="05" title="Contact" />
+  <div class="contact-links">
+    {contactLinks.map((link) =>
+      link.external ? (
+        <ExternalLink href={link.href} arrow={false}>
+          {link.label} <span>{link.display}</span>
+        </ExternalLink>
+      ) : (
+        <a href={link.href}>
+          {link.label} <span>{link.display}</span>
+        </a>
+      ),
+    )}
+  </div>
+</section>
+
+<style>
+  .contact-links {
+    display: flex;
+    flex-direction: column;
+    border-top: 1px solid var(--rule);
+  }
+  .contact-links a {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 16px;
+    padding: 30px 16px;
+    border-bottom: 1px solid var(--rule);
+    text-decoration: none;
+    font-family: var(--grotesque);
+    font-weight: 800;
+    font-size: clamp(24px, 4.5vw, 44px);
+    text-transform: uppercase;
+    transition:
+      background 0.15s ease,
+      color 0.15s ease;
+  }
+  .contact-links a span:not(.sr-only) {
+    font-family: var(--mono);
+    font-weight: 400;
+    font-size: var(--text-label);
+    letter-spacing: var(--tracking-meta);
+    color: var(--dim);
+    text-transform: uppercase;
+    overflow-wrap: anywhere;
+    text-align: right;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .contact-links a:hover {
+      background: var(--fg);
+      color: var(--bg);
+    }
+    .contact-links a:hover span {
+      color: var(--bg);
+    }
+  }
+  @media (max-width: 640px) {
+    .contact-links a {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 6px;
+      padding: 22px 6px;
+    }
+    .contact-links a span:not(.sr-only) {
+      letter-spacing: var(--tracking-snug);
+      text-align: left;
+    }
+  }
+</style>

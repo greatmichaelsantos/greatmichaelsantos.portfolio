@@ -1,0 +1,18 @@
+---
+import { skillGroups } from '../data/skills';
+import SectionHeading from './SectionHeading.astro';
+---
+
+<section id="skills" class="reveal" aria-labelledby="skills-h">
+  <SectionHeading id="skills-h" index="03" title="Skills" />
+  {skillGroups.map((group) => (
+    <div class="group">
+      <h3>{group.title}</h3>
+      <ul class="chips">
+        {group.items.map((skill) => (
+          <li>{skill}</li>
+        ))}
+      </ul>
+    </div>
+  ))}
+</section>

@@ -1,0 +1,77 @@
+---
+import Text from './Text.astro';
+import type { CopyValue } from '../../lib/caseStudy';
+
+interface Props {
+  items: { title: CopyValue; detail: CopyValue; guided: CopyValue }[];
+}
+const { items } = Astro.props;
+const pad = (n: number) => String(n).padStart(2, '0');
+---
+
+<ol class="pains">
+  {items.map((p, i) => (
+    <li class="pain">
+      <span class="pain__n" aria-hidden="true">
+        {pad(i + 1)}
+      </span>
+      <h4 class="pain__title">
+        <Text value={p.title} as="span" />
+      </h4>
+      <Text value={p.detail} class="pain__detail" />
+      <div class="pain__guided">
+        <span class="pain__key">How it guided the design</span>
+        <Text value={p.guided} class="pain__detail" />
+      </div>
+    </li>
+  ))}
+</ol>
+
+<style>
+  .pains {
+    list-style: none;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  @media (min-width: 768px) {
+    .pains {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  .pain {
+    padding: 20px;
+    border: 1px solid var(--rule);
+    display: grid;
+    gap: 10px;
+    align-content: start;
+  }
+  .pain__n {
+    font-size: var(--text-label);
+    color: var(--dim);
+  }
+  .pain__title {
+    font-family: var(--grotesque);
+    font-weight: 800;
+    font-size: 18px;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-title);
+  }
+  .pain__guided {
+    display: grid;
+    gap: 8px;
+    padding-top: 10px;
+    border-top: 1px solid var(--rule);
+  }
+  .pain__key {
+    font-size: var(--text-label);
+    letter-spacing: var(--tracking-meta);
+    text-transform: uppercase;
+    color: var(--dim);
+  }
+  .pain :global(.pain__detail) {
+    font-size: var(--text-small);
+    line-height: 1.7;
+    color: var(--soft);
+  }
+</style>

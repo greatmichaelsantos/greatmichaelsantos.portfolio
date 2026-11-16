@@ -1,0 +1,70 @@
+---
+// Numbered process timeline: one short line per step, joined by a rule.
+import Text from './Text.astro';
+import type { CopyValue } from '../../lib/caseStudy';
+
+interface Props {
+  steps: { title: string; detail: CopyValue }[];
+}
+const { steps } = Astro.props;
+const pad = (n: number) => String(n).padStart(2, '0');
+---
+
+<ol class="steps">
+  {steps.map((step, i) => (
+    <li class="step">
+      <span class="step__n" aria-hidden="true">
+        {pad(i + 1)}
+      </span>
+      <div>
+        <h4 class="step__title">{step.title}</h4>
+        <Text value={step.detail} class="step__detail" />
+      </div>
+    </li>
+  ))}
+</ol>
+
+<style>
+  .steps {
+    list-style: none;
+    display: grid;
+    border-left: 1px solid var(--rule);
+    margin-left: 6px;
+  }
+  .step {
+    position: relative;
+    display: grid;
+    grid-template-columns: 36px minmax(0, 1fr);
+    gap: 12px;
+    padding: 0 0 22px 20px;
+  }
+  .step:last-child {
+    padding-bottom: 0;
+  }
+  .step::before {
+    content: '';
+    position: absolute;
+    left: -5px;
+    top: 6px;
+    width: 9px;
+    height: 9px;
+    background: var(--fg);
+  }
+  .step__n {
+    font-size: var(--text-label);
+    color: var(--dim);
+    line-height: 1.7;
+  }
+  .step__title {
+    font-size: var(--text-label);
+    font-weight: 700;
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .step :global(.step__detail) {
+    font-size: var(--text-small);
+    line-height: 1.7;
+    color: var(--soft);
+  }
+</style>

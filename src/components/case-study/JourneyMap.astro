@@ -1,0 +1,125 @@
+---
+// User journey map as a real table: one column per step, one row per
+// dimension. Scrolls sideways inside its own box on small screens (the page
+// itself never does); the box is focusable so keyboard users can scroll it.
+import Text from './Text.astro';
+import type { CopyValue } from '../../lib/caseStudy';
+
+type Step = {
+  action: CopyValue;
+  tasks: CopyValue;
+  feeling: CopyValue;
+  improvement: CopyValue;
+};
+interface Props {
+  caption: string;
+  steps: Step[];
+  id?: string;
+}
+const { caption, steps, id = 'journey-map' } = Astro.props;
+// Each column is headed by the step's action; these are the rows below it.
+const rows: [Exclude<keyof Step, 'action'>, string][] = [
+  ['tasks', 'Tasks'],
+  ['feeling', 'Feeling'],
+  ['improvement', 'Improvement'],
+];
+---
+
+<div class="jm" role="region" aria-labelledby={`${id}-caption`} tabindex="0">
+  <table>
+    <caption id={`${id}-caption`}>{caption}</caption>
+    <thead>
+      <tr>
+        <th scope="col">
+          <span class="sr-only">Stage</span>
+        </th>
+        {steps.map((s, i) => (
+          <th scope="col">
+            <span class="jm__n">Step {i + 1}</span>
+            <Text value={s.action} as="span" />
+          </th>
+        ))}
+      </tr>
+    </thead>
+    <tbody>
+      {rows.map(([key, label]) => (
+        <tr>
+          <th scope="row">{label}</th>
+          {steps.map((s) => (
+            <td>
+              <Text value={s[key]} as="span" />
+            </td>
+          ))}
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>
+<p class="jm__hint" aria-hidden="true">
+  Scroll sideways to see every step →
+</p>
+
+<style>
+  .jm {
+    overflow-x: auto;
+    border: 1px solid var(--rule);
+    -webkit-overflow-scrolling: touch;
+  }
+  .jm:focus-visible {
+    outline-offset: 2px;
+  }
+  table {
+    width: 100%;
+    min-width: 860px;
+    border-collapse: collapse;
+    font-size: var(--text-label);
+    line-height: 1.55;
+  }
+  caption {
+    caption-side: top;
+    text-align: left;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--rule);
+    color: var(--soft);
+    font-size: var(--text-small);
+  }
+  th,
+  td {
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--rule);
+    border-right: 1px solid var(--rule);
+    vertical-align: top;
+    text-align: left;
+  }
+  thead th {
+    font-weight: 700;
+    color: var(--fg);
+  }
+  tbody th {
+    width: 150px;
+    font-weight: 400;
+    font-size: var(--text-label);
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+    color: var(--dim);
+  }
+  .jm__n {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 400;
+    font-size: var(--text-label);
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+    color: var(--dim);
+  }
+  .jm__hint {
+    margin-top: 8px;
+    font-size: var(--text-label);
+    color: var(--dim);
+  }
+  @media (min-width: 1200px) {
+    .jm__hint {
+      display: none;
+    }
+  }
+</style>

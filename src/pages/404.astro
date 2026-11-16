@@ -1,0 +1,52 @@
+---
+// GitHub Pages serves this for any unknown URL under the site, so every link
+// and asset uses absolute, base-aware paths (url()).
+import { site } from '../data/site';
+import Base from '../layouts/Base.astro';
+import { url } from '../lib/url';
+---
+
+<Base title={`Page not found — ${site.name}`} description="This page doesn't exist." page="other" noindex>
+  <section class="not-found" aria-labelledby="not-found-h">
+    <p class="sec-label" aria-hidden="true">
+      <span class="n">404</span> Not found
+    </p>
+    <h1 id="not-found-h" class="not-found__title">
+      Page not found
+    </h1>
+    <p class="not-found__text">The page you're looking for doesn't exist or has moved.</p>
+    <div class="not-found__actions">
+      <a class="btn btn--solid" href={url('')}>
+        Back to home
+      </a>
+      <a class="btn" href={url('upahan/')}>
+        Read the case study
+      </a>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .not-found {
+    min-height: calc(100svh - var(--nav-h) - 140px);
+  }
+  .not-found__title {
+    font-family: var(--grotesque);
+    font-weight: 900;
+    font-size: clamp(40px, 8vw, 96px);
+    line-height: 0.95;
+    text-transform: uppercase;
+  }
+  .not-found__text {
+    margin-top: 24px;
+    max-width: 52ch;
+    font-size: clamp(16px, 2vw, 19px);
+    color: var(--dim);
+  }
+  .not-found__actions {
+    margin-top: 40px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+</style>

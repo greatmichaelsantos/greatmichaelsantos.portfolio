@@ -1,0 +1,108 @@
+---
+// Image + caption from public/case-study/<slug>/. A missing file stops the
+// build with the exact path, so a broken image can't be deployed.
+// `zoom` makes the image itself the link to the full-size file; otherwise a
+// "Full size" link sits in the caption.
+import fs from 'node:fs';
+import path from 'node:path';
+import { url } from '../../lib/url';
+import ExternalLink from '../ExternalLink.astro';
+import Text from './Text.astro';
+import type { FigureData } from '../../lib/caseStudy';
+
+interface Props {
+  figure: FigureData;
+  slug?: string;
+  eager?: boolean;
+  zoom?: boolean;
+  class?: string;
+}
+const { figure, slug = 'upahan', eager = false, zoom = false, class: className } = Astro.props;
+const rel = `case-study/${slug}/${figure.file}`;
+if (!fs.existsSync(path.join(process.cwd(), 'public', rel))) {
+  throw new Error(`Missing case-study image: public/${rel}`);
+}
+const src = url(rel);
+---
+
+<figure class:list={['fig', className]}>
+  {zoom ? (
+    <ExternalLink class="fig__zoom" href={src} arrow={false} note="(opens the full image in a new tab)">
+      <img
+        src={src}
+        alt={figure.alt}
+        width={figure.width}
+        height={figure.height}
+        loading={eager ? 'eager' : 'lazy'}
+        decoding="async"
+      />
+    </ExternalLink>
+  ) : (
+    <img
+      src={src}
+      alt={figure.alt}
+      width={figure.width}
+      height={figure.height}
+      loading={eager ? 'eager' : 'lazy'}
+      decoding="async"
+    />
+  )}
+  {(figure.caption || !zoom) && (
+    <figcaption>
+      {figure.caption && <Text value={figure.caption} as="span" />}
+      {!zoom && (
+        <ExternalLink class="fig__full" href={src} note="(opens the image in a new tab)">
+          Full size
+        </ExternalLink>
+      )}
+    </figcaption>
+  )}
+</figure>
+
+<style>
+  .fig {
+    margin: 0;
+  }
+  .fig img {
+    width: 100%;
+    height: auto;
+    border: 1px solid var(--rule);
+    background: var(--surface);
+  }
+  .fig__zoom {
+    display: block;
+    cursor: zoom-in;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .fig__zoom:hover img {
+      border-color: var(--fg);
+    }
+  }
+  figcaption {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 8px 16px;
+    margin-top: 10px;
+    font-size: var(--text-label);
+    line-height: 1.6;
+    color: var(--dim);
+  }
+  .fig__full {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 32px;
+    color: var(--soft);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-caps);
+    text-underline-offset: 4px;
+    white-space: nowrap;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .fig__full:hover {
+      color: var(--fg);
+    }
+  }
+</style>

@@ -1,0 +1,157 @@
+---
+// Certificate viewer. Progressive enhancement: every certificate link points
+// at the real image file and works on its own; with JS on wider screens a
+// plain left-click opens it in this dialog instead.
+import ExternalLink from './ExternalLink.astro';
+---
+
+<dialog class="cert-modal" id="certModal" aria-modal="true" aria-labelledby="certModalTitle">
+  <div class="cert-modal__bar">
+    <h2 id="certModalTitle" class="cert-modal__title">
+      Certificate
+    </h2>
+    <div class="cert-modal__actions">
+      <ExternalLink id="certModalOpen" href="#">
+        Full size
+      </ExternalLink>
+      <button class="cert-modal__close" id="certModalClose" type="button">
+        Close <span aria-hidden="true">✕</span>
+      </button>
+    </div>
+  </div>
+  <img class="cert-modal__img" id="certModalImg" alt="" />
+</dialog>
+
+<style>
+  .cert-modal {
+    width: min(920px, calc(100% - 48px));
+    height: min(90vh, calc(100% - 48px));
+    max-width: none;
+    max-height: none;
+    margin: auto;
+    padding: 0;
+    background: var(--bg);
+    color: var(--fg);
+    border: 1px solid var(--fg);
+  }
+  .cert-modal[open] {
+    display: flex;
+    flex-direction: column;
+  }
+  .cert-modal::backdrop {
+    background: rgba(0, 0, 0, 0.88);
+  }
+  .cert-modal__bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--fg);
+  }
+  .cert-modal__title {
+    font-size: var(--text-label);
+    font-weight: 400;
+    letter-spacing: var(--tracking-meta);
+    text-transform: uppercase;
+  }
+  .cert-modal__actions {
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+  .cert-modal__actions a,
+  .cert-modal__close {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 36px;
+    padding: 0 13px;
+    background: none;
+    border: 1px solid var(--fg);
+    color: var(--fg);
+    font: inherit;
+    font-size: var(--text-label);
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .cert-modal__actions a:hover,
+    .cert-modal__close:hover {
+      background: var(--fg);
+      color: var(--bg);
+    }
+  }
+  .cert-modal__img {
+    flex: 1;
+    min-height: 0;
+    width: 100%;
+    object-fit: contain;
+    background: var(--surface);
+  }
+</style>
+
+<script>
+  const dialog = document.getElementById('certModal') as HTMLDialogElement | null;
+  const img = document.getElementById('certModalImg') as HTMLImageElement | null;
+  const titleEl = document.getElementById('certModalTitle');
+  const openLink = document.getElementById('certModalOpen') as HTMLAnchorElement | null;
+  const closeBtn = document.getElementById('certModalClose');
+
+  if (dialog && img && titleEl && openLink && closeBtn && typeof dialog.showModal === 'function') {
+    let trigger: HTMLElement | null = null;
+
+    const focusables = () =>
+      Array.from(dialog.querySelectorAll<HTMLElement>('a[href], button:not([disabled])'));
+
+    document.querySelectorAll<HTMLAnchorElement>('a[data-cert]').forEach((a) => {
+      a.addEventListener('click', (e) => {
+        // Let the browser handle new-tab gestures and small screens:
+        // the link opens the real image file.
+        if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+        if (window.innerWidth < 640) return;
+        e.preventDefault();
+        trigger = a;
+        const label = a.dataset.cert || 'Certificate';
+        titleEl.textContent = label;
+        img.alt = label + ' certificate';
+        img.src = a.href;
+        openLink.href = a.href;
+        dialog.showModal();
+        closeBtn.focus();
+      });
+    });
+
+    closeBtn.addEventListener('click', () => dialog.close());
+
+    // Clicking the backdrop (the dialog element itself, outside its content) closes.
+    dialog.addEventListener('click', (e) => {
+      if (e.target === dialog) dialog.close();
+    });
+
+    // Keep Tab / Shift+Tab inside the dialog.
+    dialog.addEventListener('keydown', (e) => {
+      if (e.key !== 'Tab') return;
+      const items = focusables();
+      if (!items.length) return;
+      const first = items[0];
+      const last = items[items.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    });
+
+    // Esc fires `cancel` then `close` natively; both paths land here.
+    dialog.addEventListener('close', () => {
+      img.removeAttribute('src');
+      trigger?.focus();
+      trigger = null;
+    });
+  }
+</script>

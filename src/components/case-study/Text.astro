@@ -1,0 +1,19 @@
+---
+// Renders a piece of case-study copy: real text, or a TODO(Kel) placeholder.
+import type { CopyValue } from '../../lib/caseStudy';
+import Todo from './Todo.astro';
+
+interface Props {
+  value?: CopyValue;
+  /** Element for real text; 'span' also makes a placeholder inline. */
+  as?: 'p' | 'span';
+  class?: string;
+}
+const { value, as: Tag = 'p', class: className } = Astro.props;
+---
+
+{value == null ? null : typeof value === 'string' ? (
+  <Tag class={className}>{value}</Tag>
+) : (
+  <Todo hint={value.todo} inline={Tag === 'span'} />
+)}

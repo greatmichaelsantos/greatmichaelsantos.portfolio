@@ -1,0 +1,106 @@
+---
+// One before/after pair: side by side from 768px, stacked below.
+import Figure from './Figure.astro';
+import Text from './Text.astro';
+import type { CopyValue, FigureData } from '../../lib/caseStudy';
+
+interface Props {
+  screen: string;
+  before: FigureData;
+  after: FigureData;
+  changed: string;
+  why?: CopyValue;
+  mobile?: boolean;
+}
+const { screen, before, after, changed, why, mobile = false } = Astro.props;
+---
+
+<article class:list={['ba', { 'ba--mobile': mobile }]}>
+  <h4 class="ba__title">{screen}</h4>
+  <div class="ba__grid">
+    <div class="ba__side">
+      <p class="ba__label">Before</p>
+      <Figure figure={before} />
+    </div>
+    <div class="ba__side">
+      <p class="ba__label ba__label--after">After</p>
+      <Figure figure={after} />
+    </div>
+  </div>
+  <div class="ba__notes">
+    <p>
+      <span class="ba__key">What changed</span> {changed}
+    </p>
+    {why && (
+      <div class="ba__why">
+        <span class="ba__key">Why</span> <Text value={why} as="span" />
+      </div>
+    )}
+  </div>
+</article>
+
+<style>
+  .ba {
+    padding: 28px 0 36px;
+    border-top: 1px solid var(--rule);
+  }
+  .ba__title {
+    font-family: var(--grotesque);
+    font-weight: 800;
+    font-size: clamp(18px, 2.2vw, 22px);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-title);
+    margin-bottom: 18px;
+  }
+  .ba__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  .ba--mobile .ba__grid {
+    max-width: 640px;
+  }
+  .ba--mobile .ba__side {
+    max-width: 300px;
+  }
+  @media (min-width: 768px) {
+    .ba__grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  .ba__label {
+    display: inline-block;
+    margin-bottom: 10px;
+    padding: 3px 10px;
+    border: 1px solid var(--fg);
+    font-size: var(--text-label);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+  }
+  .ba__label--after {
+    background: var(--fg);
+    color: var(--bg);
+  }
+  .ba__notes {
+    margin-top: 18px;
+    max-width: 72ch;
+    display: grid;
+    gap: 10px;
+    font-size: var(--text-small);
+    line-height: 1.7;
+    color: var(--soft);
+  }
+  .ba__why {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 8px;
+  }
+  .ba__key {
+    margin-right: 8px;
+    font-size: var(--text-label);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--fg);
+  }
+</style>

@@ -1,0 +1,54 @@
+---
+import { site } from '../data/site';
+
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer reveal">
+  <span>
+    © {year} {site.name}
+  </span>
+  <a class="to-top" href="#top">
+    Back to top <span aria-hidden="true">↑</span>
+  </a>
+  <span>Built by hand. Black &amp; white on purpose.</span>
+</footer>
+
+<style>
+  .site-footer {
+    max-width: 1060px;
+    margin: 0 auto;
+    padding: 32px 24px 48px;
+    font-size: var(--text-label);
+    letter-spacing: var(--tracking-meta);
+    text-transform: uppercase;
+    color: var(--dim);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .to-top {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 44px;
+    padding: 0 12px;
+    border: 1px solid var(--rule);
+    color: var(--fg);
+    text-decoration: none;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .to-top:hover {
+      background: var(--fg);
+      color: var(--bg);
+    }
+  }
+  @media (max-width: 640px) {
+    .site-footer {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+</style>

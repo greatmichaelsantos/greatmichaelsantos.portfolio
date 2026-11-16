@@ -1,0 +1,149 @@
+---
+// Site-wide ambient "constellation" dot-web drawn behind all content.
+---
+
+<canvas id="constellation" aria-hidden="true"></canvas>
+
+<style>
+  #constellation {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+    z-index: -1;
+    pointer-events: none;
+  }
+</style>
+
+<script>
+  const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const canvas = document.getElementById('constellation') as HTMLCanvasElement | null;
+  const ctx = canvas?.getContext('2d');
+
+  if (canvas && ctx) {
+    const DPR = Math.min(window.devicePixelRatio || 1, 2);
+    type Pt = { x: number; y: number; vx: number; vy: number; r: number };
+    let W = 0;
+    let H = 0;
+    let pts: Pt[] = [];
+    let raf: number | null = null;
+    let LINK = 140;
+    const mouse = { x: -9999, y: -9999 };
+
+    const build = () => {
+      W = window.innerWidth;
+      H = window.innerHeight;
+      canvas.width = Math.round(W * DPR);
+      canvas.height = Math.round(H * DPR);
+      ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+      const mobile = W < 700;
+      LINK = mobile ? 110 : 140;
+      const n = Math.max(24, Math.min(mobile ? 42 : 80, Math.floor((W * H) / 23000)));
+      pts = [];
+      for (let i = 0; i < n; i++) {
+        pts.push({
+          x: Math.random() * W,
+          y: Math.random() * H,
+          vx: (Math.random() - 0.5) * 0.18,
+          vy: (Math.random() - 0.5) * 0.18,
+          r: 0.9 + Math.random() * 0.9,
+        });
+      }
+    };
+
+    const draw = () => {
+      ctx.clearRect(0, 0, W, H);
+      for (let i = 0; i < pts.length; i++) {
+        for (let j = i + 1; j < pts.length; j++) {
+          const a = pts[i];
+          const b = pts[j];
+          const dx = a.x - b.x;
+          const dy = a.y - b.y;
+          const d2 = dx * dx + dy * dy;
+          if (d2 < LINK * LINK) {
+            const d = Math.sqrt(d2);
+            ctx.strokeStyle = 'rgba(255,255,255,' + ((1 - d / LINK) * 0.1).toFixed(3) + ')';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(a.x, a.y);
+            ctx.lineTo(b.x, b.y);
+            ctx.stroke();
+          }
+        }
+      }
+      const R = 210;
+      for (const p of pts) {
+        let a = 0.26;
+        let r = p.r;
+        const dx = p.x - mouse.x;
+        const dy = p.y - mouse.y;
+        const d2 = dx * dx + dy * dy;
+        if (d2 < R * R) {
+          const d = Math.sqrt(d2);
+          const f = 1 - d / R;
+          a = Math.min(0.95, 0.26 + f * 0.7);
+          r = p.r + f * 1.4;
+          ctx.strokeStyle = 'rgba(255,255,255,' + (f * 0.5).toFixed(3) + ')';
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.moveTo(mouse.x, mouse.y);
+          ctx.lineTo(p.x, p.y);
+          ctx.stroke();
+        }
+        ctx.fillStyle = 'rgba(255,255,255,' + a.toFixed(3) + ')';
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    };
+
+    const loop = () => {
+      for (const p of pts) {
+        p.x += p.vx;
+        p.y += p.vy;
+        if (p.x < 0 || p.x > W) p.vx *= -1;
+        if (p.y < 0 || p.y > H) p.vy *= -1;
+      }
+      draw();
+      raf = requestAnimationFrame(loop);
+    };
+
+    const start = () => {
+      if (raf) cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(loop);
+    };
+
+    build();
+    if (REDUCED) draw();
+    else start();
+
+    window.addEventListener('pointermove', (e) => {
+      mouse.x = e.clientX;
+      mouse.y = e.clientY;
+    });
+    document.addEventListener('mouseleave', () => {
+      mouse.x = -9999;
+      mouse.y = -9999;
+    });
+
+    let rt: number | undefined;
+    window.addEventListener('resize', () => {
+      clearTimeout(rt);
+      rt = window.setTimeout(() => {
+        build();
+        if (REDUCED) draw();
+      }, 150);
+    });
+
+    document.addEventListener('visibilitychange', () => {
+      if (REDUCED) return;
+      if (document.hidden) {
+        if (raf) {
+          cancelAnimationFrame(raf);
+          raf = null;
+        }
+      } else start();
+    });
+  }
+</script>
