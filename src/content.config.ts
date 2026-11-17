@@ -52,7 +52,13 @@ const caseStudies = defineCollection({
     }),
 
     // 4. My role & the team
-    me: z.object({ name: z.string(), roles: z.array(z.string()), contributions: z.array(text) }),
+    me: z.object({
+      name: z.string(),
+      roles: z.array(z.string()),
+      built: z.array(text),
+      commitShare: z.string(),
+      led: z.array(text),
+    }),
     teammates: z.array(z.object({ name: z.string(), role: z.string(), contribution: text })),
     decisions: z.array(z.object({ label: z.string(), detail: text, href: z.string() })),
 

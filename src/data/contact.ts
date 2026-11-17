@@ -1,3 +1,5 @@
+import { url } from '../lib/url';
+
 interface ContactLink {
   label: string;
   href: string;
@@ -22,6 +24,12 @@ export const contactLinks: ContactLink[] = [
     label: 'LinkedIn',
     href: 'https://www.linkedin.com/in/great-michael-santos-7394b3415/',
     display: 'linkedin.com/in/great-michael-santos-7394b3415',
+    external: true,
+  },
+  {
+    label: 'Résumé',
+    href: url('resume.pdf'),
+    display: '(PDF)',
     external: true,
   },
 ];

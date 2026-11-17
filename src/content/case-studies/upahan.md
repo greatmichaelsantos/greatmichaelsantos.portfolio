@@ -135,17 +135,42 @@ journey:
 me:
   name: Great Michael Santos
   roles: [Lead Developer, Team Lead, Documentation Lead]
-  contributions:
-    # source: `git shortlog -sn --no-merges main` → 111 of 113 commits (98%) by Great Michael Santos
-    - 'I built most of the system: 111 of the 113 commits on the main branch are mine.'
-    # source: commits 0b11bc7 ("swap in the new U-mark"), f1cc980, and the redesign/upahan-v2 commits, all by Great Michael Santos
-    - I designed the UPahan logo and led the full visual redesign (v2).
+  # Each item checked in the UPahan repo (main @ 1dfa3b0). "lines" = current lines by author
+  # (git blame -M -C -C); the repo's first two commits (2904e5c initial app, 7d1ce2d monorepo
+  # migration + Expo app) are by the AdRay-11 account.
+  built:
+    # apps/server/controllers/invitesController.js ("returns a 72-hour invite link"), authController.js,
+    # apps/web/src/pages/auth/LoginPage.jsx ("Email or phone number"), SetPasswordPage.jsx, context/AuthContext.jsx;
+    # commit 55fdaee "invite-only accounts… login by email or phone" (Great Michael Santos); 18 of 19 commits, ~80% of lines
+    - Invite-only accounts and sign-in (email or phone, 72-hour invite links)
+    # apps/server/controllers/paymentsController.js (approvePayment / rejectPayment), apps/web/src/pages/admin/AdminPaymentRequests.jsx,
+    # components/PaymentDeclarationModal.jsx, components/StatusBadge.jsx ("VERIFIED" / "NOT VERIFIED"); 38 of 39 commits,
+    # ~52% of lines. Approve/reject and the declaration modal first appear in 7d1ce2d (AdRay-11 = Adrian), hence "took over".
+    - Took over and rebuilt the payment verification flow (Verified / Not Verified), first started by Adrian
+    # apps/server/db/migrations/20261030_rls_all_tables.up.sql, apps/server/db/migrateRls.js; commit 5d00b57 (100% of lines)
+    - Database security rules
+    # apps/server/tests/hardening.test.js (visibleRejectWording check: fails if "Reject" wording is visible); 2 of 2 commits, 100%
+    - Hardening tests (including the test that blocks "Reject" wording)
+    # apps/web/src/pages/admin/AdminDashboard.jsx; 13 of 14 commits, ~92% of lines
+    - The admin dashboard
+    # apps/web/src/pages/tenant/*, components/TenantLayout.jsx, TenantSidebar.jsx; 29 of 31 commits, ~63% of lines.
+    # The tenant pages were first added in 2904e5c / 7d1ce2d (AdRay-11 = Adrian), hence "took over".
+    - Took over and expanded the tenant portal, first started by Adrian
+    # apps/web/src/components/Logo.jsx, apps/web/public/upahan-logo*.png; commits 0b11bc7 ("swap in the new U-mark"),
+    # f1cc980, and the redesign commits (c8f4a23…c6c55a3), all by Great Michael Santos
+    - The UPahan logo and the full v2 redesign
+  # source: `git shortlog -sn --no-merges main` → 111 of 113 commits by Great Michael Santos
+  commitShare: 111 of the 113 commits on main are mine.
+  led:
     - I led the team and wrote the project documentation.
 
 teammates:
   - name: Adrian Raymundo
     role: Developer
-    contribution: Helped with testing and smaller coding tasks, like fixing modules.
+    # 2904e5c (initial app) and 7d1ce2d (monorepo migration + Expo mobile app, first tenant pages and payment approval)
+    contribution: >-
+      Set up the initial app and the mobile app workspace, built the first versions of the tenant pages and payment
+      approval, and helped with testing and fixing modules.
   - name: Rhay Alexis Lara
     role: Designer
     contribution: Created the low- and high-fidelity designs for UPahan's first UI.
@@ -171,7 +196,7 @@ process:
     - title: First UI
       detail: 'Rhay Alexis Lara designed the first UI: low-fidelity wireframes, then high-fidelity designs.'
     - title: First version
-      detail: Built the first version (web, backend and database).
+      detail: We built the first version (web, backend, and database).
     - title: Feedback
       detail: Feedback from the defense panel and the client (see below).
     - title: Redesign (v2)
@@ -452,7 +477,9 @@ final:
 
 # ---------- 8. Lessons learned & next steps ----------
 lessons:
-  - Everything needs to be considered, even when you think it's already enough.
+  - >-
+    Everything needs to be considered, even when you think it's already enough. I thought the tenant side was simple,
+    but older tenants needed it even simpler.
   - >-
     Words matter when real money is involved. Changing "Rejected" to "Not Verified" was a small code change but a
     big one for the people using it.

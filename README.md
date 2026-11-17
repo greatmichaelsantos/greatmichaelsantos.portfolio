@@ -3,7 +3,7 @@
 My personal portfolio: selected projects, a full case study of **UPahan** (a property management platform
 built for Rosueta Realty Services), skills, certifications and contact links.
 
-Live: <https://greatmichaelsantos.github.io/greatmichaelsantos.portfolio/>
+Live: <https://greatmichaelsantos.dev/>
 
 ## Stack
 
@@ -52,7 +52,7 @@ To change what the site says, edit the files in `src/data/` (home page) or
 
 ```sh
 npm install          # install dependencies (CI uses `npm ci` with the committed package-lock.json)
-npm run dev          # dev server at http://localhost:4321/greatmichaelsantos.portfolio/
+npm run dev          # dev server at http://localhost:4321/
 npm run build        # production build to dist/
 npm run preview      # serve the built dist/ locally
 npm run check        # type-check .astro and .ts files (astro check)
@@ -98,18 +98,17 @@ One-time setup: in the GitHub repo, go to **Settings → Pages → Build and dep
 
 Astro builds each page as a folder with an `index.html` (`/upahan/index.html`), so on GitHub Pages:
 
-- `/greatmichaelsantos.portfolio/upahan/` loads directly and on refresh
-- `/greatmichaelsantos.portfolio/upahan` (no trailing slash) redirects to the version with the slash
+- `/upahan/` loads directly and on refresh
+- `/upahan` (no trailing slash) redirects to the version with the slash
 - any unknown path gets `404.html`, which uses absolute links so it works at any depth
 
-### Switching to a custom domain
+### Custom domain
 
-The site is currently a GitHub Pages _project_ site, so everything lives under the
-`/greatmichaelsantos.portfolio/` base path. To serve it from a domain such as `https://example.com`:
+The site is served from the custom domain <https://greatmichaelsantos.dev> at the root (`base: '/'`):
 
-1. In `astro.config.mjs`, set `site: 'https://example.com'` and `base: '/'` (or remove `base`).
-2. Add a file `public/CNAME` containing only the domain, e.g. `example.com`.
-3. Point the domain's DNS at GitHub Pages and enter the domain under **Settings → Pages → Custom domain**.
+1. `astro.config.mjs` sets `site: 'https://greatmichaelsantos.dev'` and `base: '/'`.
+2. `public/CNAME` contains only the domain, `greatmichaelsantos.dev`, and is copied into `dist/` on every build.
+3. The domain's DNS points at GitHub Pages, and the domain is entered under **Settings → Pages → Custom domain**.
 
 All internal links and asset paths go through `url()` in `src/lib/url.ts`, which reads `base` at build
-time, so no component needs to change.
+time, so no component needs to change if the base ever moves.

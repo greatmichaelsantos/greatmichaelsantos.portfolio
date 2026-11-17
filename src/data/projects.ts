@@ -13,16 +13,24 @@ interface FeaturedProject {
   stack: StackRow[];
   caseStudyHref: string;
   liveHref: string;
+  /** Shown where a code link would be when the repo isn't public. */
+  codeNote: string;
 }
 
 interface Project {
   title: string;
   summary: string;
   stack: StackRow[];
+  /** Where/why it was built, shown under the summary. */
+  context?: string;
+  /** Team credits, shown under the summary. */
+  team?: string;
   liveHref?: string;
+  /** Shown instead of a Live link when there is none (e.g. "Not deployed"). */
+  status?: string;
+  codeHref?: string;
   notes?: string[];
   role?: string;
-  team?: string;
   dates?: string;
 }
 
@@ -41,6 +49,7 @@ export const featuredProject: FeaturedProject = {
   ],
   caseStudyHref: url('upahan/'),
   liveHref: 'https://upahan.vercel.app',
+  codeNote: 'Code private (client project)',
 };
 
 export const otherProjects: Project[] = [
@@ -48,26 +57,32 @@ export const otherProjects: Project[] = [
     title: 'SALIN-LAHI',
     summary:
       'A heritage quiz-and-learning kiosk for Olongapo City, running live on a tablet — visitors explore local history and culture through guided topics with audio narration, take quizzes, and climb a public leaderboard.',
+    context: 'Built during my internship at A+ Solutions Development Center (Jun–Jul 2026).',
+    team: 'Great Michael Santos & Rholly Cao (Lead Developer & Lead Design), Xyryle Cator (QA), Frietz Ranz Bayog, James Dominic Ortega, and Kathea Kim Anjie San Andrea (map design and site content).',
     stack: [
       ['Interface', 'HTML · CSS · JS'],
       ['Logic', 'JavaScript'],
       ['Data', 'Firestore'],
     ],
     liveHref: 'https://salin-lahi-apsd.web.app',
-    notes: ['1st Runner-up', 'PRO Future Innovators'],
+    // Public repo; its .firebaserc deploys to the "salin-lahi-apsd" Firebase project (the live site).
+    codeHref: 'https://github.com/greatmichaelsantos/saling-lahin-apsd',
+    notes: ['1st Runner-up · Future Innovators, Philippine Robotics Olympiad'],
+    role: 'Lead Developer',
     dates: 'Jun 2026 – Jul 2026',
   },
   {
-    title: 'Vitalyze',
+    title: 'Mend (formerly Vitalyze)',
     summary:
-      'An AI-driven mobile health app that tracks mood, sleep, diet, and physical health through daily check-ins, then surfaces personalized wellness insights and 7-day trends.',
+      'A mobile health app that tracks mood, sleep, diet, and physical health through a 4-step daily check-in, then shows 7-day trends and health patterns.',
+    context: 'Application Development project',
     stack: [
       ['Interface', 'React Native'],
-      ['Logic', 'Knowledge Graph'],
+      ['Logic', 'Knowledge-graph health-pattern engine'],
       ['Data', 'Firebase'],
     ],
+    status: 'Not deployed (course project)',
     role: 'Solo Developer',
-    team: 'Solo project',
     dates: 'Jan 2026 – Apr 2026',
   },
 ];

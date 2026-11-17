@@ -1,21 +1,12 @@
 ---
+import { site } from '../data/site';
 import SectionHeading from './SectionHeading.astro';
 ---
 
 <section id="about" class="reveal" aria-labelledby="about-h">
   <SectionHeading id="about-h" index="02" title="About" />
   <div class="about-body">
-    <p>
-      I'm a Computer Science student and full-stack developer based in Olongapo City, focused on building
-      complete products — from the interfaces people use to the systems running behind them. I've delivered an
-      AI-driven health application, a rental-management platform for a real client, and an award-winning
-      heritage kiosk, and I care about the details that make software feel considered and finished.
-    </p>
-    <p>
-      I treat every project as a chance to sharpen my craft and raise my own standard. Right now I'm deepening
-      my work with React, and I'm always looking for opportunities to build software that's genuinely useful
-      to the people who use it.
-    </p>
+    <p>{site.about}</p>
   </div>
 </section>
 
@@ -24,8 +15,5 @@ import SectionHeading from './SectionHeading.astro';
     max-width: 58ch;
     font-size: clamp(16px, 2vw, 20px);
     line-height: 1.8;
-  }
-  .about-body p + p {
-    margin-top: 1.2em;
   }
 </style>

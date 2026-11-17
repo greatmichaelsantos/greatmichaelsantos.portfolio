@@ -116,7 +116,7 @@ import ExternalLink from './ExternalLink.astro';
         trigger = a;
         const label = a.dataset.cert || 'Certificate';
         titleEl.textContent = label;
-        img.alt = label + ' certificate';
+        img.alt = a.dataset.certAlt || label + ' certificate';
         img.src = a.href;
         openLink.href = a.href;
         dialog.showModal();

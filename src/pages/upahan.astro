@@ -160,8 +160,11 @@ const phoneFrameName = (caption: unknown) =>
                 <li>{role}</li>
               ))}
             </ul>
-            <h4>What I did</h4>
-            <CopyList items={cs.me.contributions} />
+            <h4>What I built</h4>
+            <CopyList items={cs.me.built} />
+            <p class="me__share">{cs.me.commitShare}</p>
+            <h4 class="me__led">Leadership</h4>
+            <CopyList items={cs.me.led} />
           </div>
 
           <h3>The team</h3>
@@ -170,7 +173,9 @@ const phoneFrameName = (caption: unknown) =>
               <dt>{cs.me.name} (me)</dt>
               <dd>
                 <span class="kv__role">{cs.me.roles.join(', ')}</span>
-                <span>Built most of the system, led the v2 redesign and the team.</span>
+                <span>
+                  Built or took over the features listed above, and led the team and the v2 redesign.
+                </span>
               </dd>
             </div>
             {cs.teammates.map((member) => (
@@ -546,6 +551,14 @@ const phoneFrameName = (caption: unknown) =>
     flex-wrap: wrap;
     gap: 8px;
     margin: 14px 0 24px;
+  }
+  .me__share {
+    margin-top: 12px;
+    font-size: var(--text-label);
+    color: var(--dim);
+  }
+  .cs-body .me__led {
+    margin-top: 24px;
   }
   .me__roles li {
     padding: 4px 12px;

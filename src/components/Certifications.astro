@@ -13,13 +13,18 @@ import SectionHeading from './SectionHeading.astro';
       <ul class="chips">
         {group.certificates.map((cert) => (
           <li>
-            <ExternalLink
-              href={url(`certs/${cert.file}`)}
-              data-cert={`${group.issuer} ${cert.label}`}
-              note="(certificate image, opens in a new tab)"
-            >
-              {cert.label}
-            </ExternalLink>
+            {cert.file ? (
+              <ExternalLink
+                href={url(`certs/${cert.file}`)}
+                data-cert={cert.title ?? `${group.issuer} ${cert.label}`}
+                data-cert-alt={cert.alt}
+                note={cert.alt ? '(image, opens in a new tab)' : '(certificate image, opens in a new tab)'}
+              >
+                {cert.label}
+              </ExternalLink>
+            ) : (
+              cert.label
+            )}
           </li>
         ))}
       </ul>

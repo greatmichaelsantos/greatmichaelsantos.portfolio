@@ -29,6 +29,7 @@ const portrait = url('img/portrait.jpg');
 
     <div class="hero-copy reveal">
       <p class="hero-role">{site.role}</p>
+      <p class="hero-status">{site.status}</p>
       <p class="hero-pitch">{site.pitch}</p>
       <p class="hero-learning">Currently learning — {site.currentlyLearning}</p>
       <div class="hero-actions">
@@ -132,6 +133,7 @@ const portrait = url('img/portrait.jpg');
     margin-top: 20px;
   }
   .hero-role,
+  .hero-status,
   .hero-pitch,
   .hero-learning {
     text-shadow:
@@ -146,6 +148,12 @@ const portrait = url('img/portrait.jpg');
     font-size: clamp(13px, 1.6vw, 16px);
     letter-spacing: 0.2em;
     text-transform: uppercase;
+  }
+  .hero-status {
+    margin-top: 10px;
+    font-size: var(--text-label);
+    letter-spacing: var(--tracking-caps);
+    color: var(--soft);
   }
   .hero-pitch {
     margin: 16px auto 0;
@@ -386,7 +394,7 @@ const portrait = url('img/portrait.jpg');
        isn't enough for the dimmer lines (measured ~3.5–4.3:1 over the
        brightest dots), so dots directly under each text line are dimmed, with
        a soft edge, to keep body text at WCAG AA (≥4.5:1). */
-    const TEXT_LINES = ['.hero-role', '.hero-pitch', '.hero-learning'];
+    const TEXT_LINES = ['.hero-role', '.hero-status', '.hero-pitch', '.hero-learning'];
     const DIM_PAD_X = 10;
     const DIM_PAD_Y = 6;
     const DIM_FEATHER = 10;
