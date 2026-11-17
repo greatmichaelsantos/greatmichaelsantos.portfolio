@@ -17,8 +17,8 @@ export const certificateGroups: CertificateGroup[] = [
   {
     issuer: 'TESDA',
     certificates: [
-      { label: 'NC III — Visual Graphic Design', file: 'tesda-nc3-visual-graphic-design.webp' },
-      { label: 'NC II — Computer Systems Servicing', file: 'tesda-nc2-computer-systems-servicing.webp' },
+      { label: 'NC III: Visual Graphic Design', file: 'tesda-nc3-visual-graphic-design.webp' },
+      { label: 'NC II: Computer Systems Servicing', file: 'tesda-nc2-computer-systems-servicing.webp' },
     ],
   },
   {
@@ -33,7 +33,7 @@ export const certificateGroups: CertificateGroup[] = [
   {
     issuer: 'Honors',
     certificates: [
-      { label: "Dean's Lister: 4 consecutive semesters (1st–2nd Year), latest GPA 94.69" },
+      { label: "Dean's Lister: 4 consecutive semesters (1st to 2nd Year), latest GPA 94.69" },
       {
         label: 'Top 5, BSCS 2nd Year',
         file: 'top5-bscs2.webp',

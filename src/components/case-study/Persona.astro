@@ -97,10 +97,14 @@ const { label, name, background, goals, frustrations, statement } = Astro.props;
     position: relative;
   }
   ul li::before {
-    content: '—';
+    content: '';
     position: absolute;
     left: 0;
-    color: var(--dim);
+    /* A drawn rule instead of an em dash glyph, so it isn't read aloud. */
+    top: calc(0.5lh - 1px);
+    width: 0.65em;
+    height: 0.1em;
+    background: var(--dim);
   }
   .persona__statement :global(p) {
     max-width: 68ch;

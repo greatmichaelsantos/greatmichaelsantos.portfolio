@@ -13,7 +13,7 @@ client: Rosueta Realty Services (formerly RGT Real Estate Marketing)
 course: Software Engineering 2 · Gordon College
 liveUrl: https://upahan.vercel.app
 
-duration: January 2026 – Present
+duration: January 2026 to Present
 role: Lead Developer, Team Lead, Documentation Lead
 team: Team of 3
 
@@ -53,11 +53,11 @@ problem:
     # source: apps/server/controllers/invitesController.js (createTenantInvite: "returns a 72-hour invite link"); commit 55fdaee
     - >-
       Invite-only, internal system: there is no public sign-up. An admin creates each tenant account and
-      shares a one-time invite link; password resets also use one-time links.
+      shares a one-time invite link. Password resets also use one-time links.
     # source: apps/web/src/context/AuthContext.jsx (login by "identifier"); apps/server/controllers/invitesController.js (parseContact)
     - Users sign in with either an email address or a Philippine mobile number.
     # source: apps/web/src/App.jsx (routes /admin/*, /tenant/*, /units)
-    - Separate portals for staff and for tenants; guests can browse available units without signing in.
+    - Separate portals for staff and for tenants. Guests can browse available units without signing in.
 
 # ---------- 3. Target users ----------
 users: 'Two groups of users: admin/staff and tenants.'
@@ -339,7 +339,7 @@ beforeAfter:
         open requests), a rent-collection card with a donut chart, collected/outstanding amounts and
         paid/pending/overdue counts, a six-month trend chart, a full-month calendar and a fix-requests list.
         The sidebar gained count badges. (The fix-request count differs because the old dashboard counted
-        only pending requests; the new one also counts in-progress ones.)
+        only pending requests, and the new one also counts in-progress ones.)
     - screen: Units
       before:
         file: before-units.webp
@@ -429,9 +429,9 @@ final:
     # source: apps/server/routes/units.js (create, update, delete, photos, remove tenant)
     - 'Units: staff add and manage units and assign tenants.'
     # source: apps/server/routes/payments.js (declare, approve, reject); apps/web/src/components/PaymentDeclarationModal.jsx
-    - 'Payments: tenants declare payments with proof; staff verify them or mark them Not Verified.'
+    - 'Payments: tenants declare payments with proof. Staff verify them or mark them Not Verified.'
     # source: apps/web/src/pages/tenant/TenantMaintenanceRequest.jsx (category, priority, 3–5 photos); apps/server/routes/maintenance.js
-    - 'Maintenance requests: tenants send them with photos; staff track and resolve them.'
+    - 'Maintenance requests: tenants send them with photos. Staff track and resolve them.'
     # source: apps/web/src/pages/tenant/TenantDashboard.jsx ("Next Due"). Due date *reminders* are not in the repo.
     - The next due date on the tenant dashboard.
   screens:
@@ -471,9 +471,9 @@ final:
       source: apps/web/src/index.css (.tap-target)
     - title: Visible keyboard focus and reduced motion
       detail: >-
-        Keyboard users get a teal focus ring (:focus-visible); form selects only show it after keyboard input.
+        Keyboard users get a teal focus ring (:focus-visible). Form selects only show it after keyboard input.
         Loading skeletons stop pulsing when the user prefers reduced motion.
-      source: apps/web/src/index.css (:focus-visible, prefers-reduced-motion); apps/web/src/utils/inputModality.js
+      source: apps/web/src/index.css (:focus-visible, prefers-reduced-motion) and apps/web/src/utils/inputModality.js
 
 # ---------- 8. Lessons learned & next steps ----------
 lessons:

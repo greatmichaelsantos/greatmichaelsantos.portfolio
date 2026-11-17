@@ -1,4 +1,4 @@
-# Great Michael Santos — Portfolio
+# Great Michael Santos · Portfolio
 
 My personal portfolio: selected projects, a full case study of **UPahan** (a property management platform
 built for Rosueta Realty Services), skills, certifications and contact links.
@@ -45,7 +45,7 @@ To change what the site says, edit the files in `src/data/` (home page) or
 
 ## Prerequisites
 
-- Node.js **24** (pinned in `.nvmrc`; `nvm use` picks it up). The CI workflow reads the same file.
+- Node.js **24** (pinned in `.nvmrc`, and `nvm use` picks it up). The CI workflow reads the same file.
 - npm (ships with Node)
 
 ## Commands

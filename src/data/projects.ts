@@ -38,8 +38,8 @@ export const featuredProject: FeaturedProject = {
   title: 'UPahan',
   client: 'Rosueta Realty Services (formerly RGT Real Estate Marketing)',
   summary:
-    'A property management platform for a real-estate client. Staff manage units, leases, tenants, rent collection and fix requests; tenants check their rent, declare payments and send maintenance requests from their own portal.',
-  dates: 'Jan 2026 – Present',
+    'A property management platform for a real-estate client. Staff manage units, leases, tenants, rent collection and maintenance requests. Tenants check their rent, declare payments and send maintenance requests from their own portal.',
+  dates: 'Jan 2026 to Present',
   role: 'Lead Developer & Team Lead',
   team: 'Team of 3',
   stack: [
@@ -56,8 +56,8 @@ export const otherProjects: Project[] = [
   {
     title: 'SALIN-LAHI',
     summary:
-      'A heritage quiz-and-learning kiosk for Olongapo City, running live on a tablet — visitors explore local history and culture through guided topics with audio narration, take quizzes, and climb a public leaderboard.',
-    context: 'Built during my internship at A+ Solutions Development Center (Jun–Jul 2026).',
+      'A heritage quiz-and-learning kiosk for Olongapo City, running live on a tablet. Visitors explore local history and culture through guided topics with audio narration, take quizzes, and climb a public leaderboard.',
+    context: 'Built during my internship at A+ Solutions Development Center (Jun to Jul 2026).',
     team: 'Great Michael Santos & Rholly Cao (Lead Developer & Lead Design), Xyryle Cator (QA), Frietz Ranz Bayog, James Dominic Ortega, and Kathea Kim Anjie San Andrea (map design and site content).',
     stack: [
       ['Interface', 'HTML · CSS · JS'],
@@ -69,7 +69,7 @@ export const otherProjects: Project[] = [
     codeHref: 'https://github.com/greatmichaelsantos/saling-lahin-apsd',
     notes: ['1st Runner-up · Future Innovators, Philippine Robotics Olympiad'],
     role: 'Lead Developer',
-    dates: 'Jun 2026 – Jul 2026',
+    dates: 'Jun 2026 to Jul 2026',
   },
   {
     title: 'Mend (formerly Vitalyze)',
@@ -83,6 +83,6 @@ export const otherProjects: Project[] = [
     ],
     status: 'Not deployed (course project)',
     role: 'Solo Developer',
-    dates: 'Jan 2026 – Apr 2026',
+    dates: 'Jan 2026 to Apr 2026',
   },
 ];
