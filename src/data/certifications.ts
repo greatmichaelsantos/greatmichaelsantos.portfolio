@@ -4,8 +4,10 @@ export interface Certificate {
   file?: string;
   /** Title for the viewer, if "<group> <label>" doesn't read well. */
   title?: string;
-  /** Alt text for the image, if it isn't a plain certificate. */
+  /** Alt text for the image, instead of "<label> certificate". */
   alt?: string;
+  /** The image is a graphic rather than a certificate (changes the link's screen reader note). */
+  graphic?: boolean;
 }
 
 interface CertificateGroup {
@@ -31,6 +33,24 @@ export const certificateGroups: CertificateGroup[] = [
     ],
   },
   {
+    // Both completed 17 Nov 2026 through the DICT Digital Workforce Hub (8 hours each).
+    issuer: 'DICT',
+    certificates: [
+      {
+        label: 'Introduction to Data Privacy',
+        file: 'dict-intro-data-privacy.webp',
+        title: 'Introduction to Data Privacy · DICT Digital Workforce Hub · Nov 2026',
+        alt: 'DICT certificate of completion: Introduction to Data Privacy, Great Michael Santos, 17 November 2026',
+      },
+      {
+        label: 'Data Privacy: Good Governance',
+        file: 'dict-data-privacy-governance.webp',
+        title: 'Data Privacy: Good Governance · DICT Digital Workforce Hub · Nov 2026',
+        alt: 'DICT certificate of completion: Data Privacy: Good Governance, Great Michael Santos, 17 November 2026',
+      },
+    ],
+  },
+  {
     issuer: 'Honors',
     certificates: [
       { label: "Dean's Lister: 4 consecutive semesters (1st to 2nd Year), latest GPA 94.69" },
@@ -39,6 +59,7 @@ export const certificateGroups: CertificateGroup[] = [
         file: 'top5-bscs2.webp',
         title: 'Top 5, BSCS 2nd Year',
         alt: 'GCCCS SPECS congratulations graphic: Great Michael G. Santos, BSCS 2, Top 5',
+        graphic: true,
       },
     ],
   },
