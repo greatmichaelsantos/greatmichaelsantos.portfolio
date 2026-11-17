@@ -118,6 +118,12 @@ const portrait = url('img/portrait.jpg');
   :global(.js body.name-filled) #nameSvg tspan {
     fill: var(--fg);
   }
+  /* Arriving mid-page (a #link or back/forward, flagged in Base.astro): the name
+     is shown finished instead of being drawn on. */
+  :global(.js.skip-intro) #nameSvg text {
+    fill: var(--fg);
+    stroke: none;
+  }
 
   /* ---- copy block: no backing box. A layered black halo keeps each text
      line readable over the dots while the face stays visible around it. ---- */
@@ -274,6 +280,7 @@ const portrait = url('img/portrait.jpg');
 
 <script>
   const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const SKIP_INTRO = document.documentElement.classList.contains('skip-intro');
 
   /* ---------- Name draw-on (SVG stroke animation) ----------
      Each letter is stroked with a dasharray longer than its outline;
@@ -302,7 +309,7 @@ const portrait = url('img/portrait.jpg');
   if (svgText) {
     requestAnimationFrame(fitName);
 
-    if (REDUCED) {
+    if (REDUCED || SKIP_INTRO) {
       fitName();
       svgText.style.stroke = 'none';
       letters.forEach((t) => (t.style.fill = '#fff'));

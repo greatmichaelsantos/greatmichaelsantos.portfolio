@@ -13,6 +13,9 @@ interface Props {
   mobile?: boolean;
 }
 const { screen, before, after, changed, why, mobile = false } = Astro.props;
+// Phone captures scroll inside equal-height frames; this names each frame.
+const frameName = (side: string) =>
+  mobile ? `${side}: ${screen.replace(/ \(mobile\)$/, '').toLowerCase()}` : undefined;
 ---
 
 <article class:list={['ba', { 'ba--mobile': mobile }]}>
@@ -20,11 +23,11 @@ const { screen, before, after, changed, why, mobile = false } = Astro.props;
   <div class="ba__grid">
     <div class="ba__side">
       <p class="ba__label">Before</p>
-      <Figure figure={before} />
+      <Figure figure={before} frame={frameName('Before')} />
     </div>
     <div class="ba__side">
       <p class="ba__label ba__label--after">After</p>
-      <Figure figure={after} />
+      <Figure figure={after} frame={frameName('After')} />
     </div>
   </div>
   <div class="ba__notes">

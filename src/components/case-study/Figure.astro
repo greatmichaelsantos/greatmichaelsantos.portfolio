@@ -3,6 +3,8 @@
 // build with the exact path, so a broken image can't be deployed.
 // `zoom` makes the image itself the link to the full-size file; otherwise a
 // "Full size" link sits in the caption.
+// `frame` (an accessible name) shows a tall image inside a fixed-height,
+// keyboard-scrollable frame, so long full-page phone captures line up.
 import fs from 'node:fs';
 import path from 'node:path';
 import { url } from '../../lib/url';
@@ -15,9 +17,10 @@ interface Props {
   slug?: string;
   eager?: boolean;
   zoom?: boolean;
+  frame?: string;
   class?: string;
 }
-const { figure, slug = 'upahan', eager = false, zoom = false, class: className } = Astro.props;
+const { figure, slug = 'upahan', eager = false, zoom = false, frame, class: className } = Astro.props;
 const rel = `case-study/${slug}/${figure.file}`;
 if (!fs.existsSync(path.join(process.cwd(), 'public', rel))) {
   throw new Error(`Missing case-study image: public/${rel}`);
@@ -37,6 +40,29 @@ const src = url(rel);
         decoding="async"
       />
     </ExternalLink>
+  ) : frame ? (
+    <div class="fig__scroller" data-more>
+      <div
+        class="fig__frame"
+        tabindex="0"
+        role="region"
+        aria-label={`${frame}, scrollable`}
+        data-scroll-frame
+      >
+        <img
+          src={src}
+          alt={figure.alt}
+          width={figure.width}
+          height={figure.height}
+          loading={eager ? 'eager' : 'lazy'}
+          decoding="async"
+        />
+      </div>
+      <span class="fig__fade" aria-hidden="true" />
+      <span class="fig__hint" aria-hidden="true">
+        Scroll ↓
+      </span>
+    </div>
   ) : (
     <img
       src={src}
@@ -78,6 +104,65 @@ const src = url(rel);
       border-color: var(--fg);
     }
   }
+
+  /* ---- scroll frame (tall phone captures) ---- */
+  .fig__scroller {
+    position: relative;
+  }
+  .fig__frame {
+    max-height: min(70vh, 640px);
+    max-height: min(70svh, 640px);
+    overflow-y: auto;
+    border: 1px solid var(--rule);
+    background: var(--surface);
+    scrollbar-width: thin;
+    scrollbar-color: var(--dim) transparent;
+  }
+  .fig__frame img {
+    display: block;
+    border: 0;
+  }
+  .fig__fade,
+  .fig__hint {
+    position: absolute;
+    pointer-events: none;
+    transition:
+      opacity 0.2s ease,
+      visibility 0.2s;
+  }
+  .fig__fade {
+    left: 1px;
+    right: 1px;
+    bottom: 1px;
+    height: 88px;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.72));
+  }
+  .fig__hint {
+    left: 50%;
+    bottom: 14px;
+    transform: translateX(-50%);
+    padding: 4px 12px;
+    background: var(--fg);
+    color: var(--bg);
+    font-size: var(--text-label);
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  /* With JS the hint and fade only show while there is more image below
+     (see the script). Without JS they simply stay visible. */
+  :global(.js) .fig__scroller:not([data-more]) .fig__fade,
+  :global(.js) .fig__scroller:not([data-more]) .fig__hint {
+    opacity: 0;
+    visibility: hidden;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .fig__fade,
+    .fig__hint {
+      transition: none;
+    }
+  }
+
   figcaption {
     display: flex;
     flex-wrap: wrap;
@@ -106,3 +191,22 @@ const src = url(rel);
     }
   }
 </style>
+
+<script>
+  // Scroll frames: keep the fade + "Scroll ↓" hint only while part of the image
+  // is still below the fold of the frame. An image that fits shows neither.
+  const update = (frame: HTMLElement) => {
+    const more = frame.scrollHeight - frame.clientHeight - frame.scrollTop > 2;
+    frame.parentElement?.toggleAttribute('data-more', more);
+  };
+  document.querySelectorAll<HTMLElement>('[data-scroll-frame]').forEach((frame) => {
+    update(frame);
+    frame.addEventListener('scroll', () => update(frame), { passive: true });
+    if ('ResizeObserver' in window) {
+      const ro = new ResizeObserver(() => update(frame));
+      ro.observe(frame);
+      const img = frame.querySelector('img');
+      if (img) ro.observe(img);
+    }
+  });
+</script>

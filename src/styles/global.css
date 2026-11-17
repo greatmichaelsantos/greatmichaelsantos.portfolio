@@ -111,8 +111,61 @@ main:focus {
   opacity: 0;
   transition: opacity 0.9s ease;
 }
-.js body.revealed .reveal {
+.js body.revealed .reveal,
+.js.skip-intro .reveal {
   opacity: 1;
+}
+
+/* ============ PAGE TRANSITIONS ============
+   Native cross-document view transitions (Chromium 126+, Safari 18.2+); other
+   browsers just navigate. The new page wipes in from the bottom while the old
+   one shrinks slightly and dims; going back wipes from the top instead (the
+   "back" type is added in Base.astro). The UPahan title morphs between the
+   Work card and the case study heading (view-transition-name: upahan-title),
+   and the sticky header keeps its own name so it never flickers. */
+@media (prefers-reduced-motion: no-preference) {
+  @view-transition {
+    navigation: auto;
+  }
+}
+::view-transition-group(*) {
+  animation-duration: 450ms;
+  animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+::view-transition-old(root) {
+  animation: vt-leave 450ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+::view-transition-new(root) {
+  animation: vt-wipe-up 450ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+html:active-view-transition-type(back)::view-transition-new(root) {
+  animation-name: vt-wipe-down;
+}
+::view-transition-old(site-nav),
+::view-transition-new(site-nav) {
+  animation: none;
+}
+@keyframes vt-wipe-up {
+  from {
+    clip-path: inset(100% 0 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+@keyframes vt-wipe-down {
+  from {
+    clip-path: inset(0 0 100% 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+@keyframes vt-leave {
+  to {
+    transform: scale(0.97);
+    filter: brightness(0.45);
+  }
 }
 
 /* ============ SHARED SECTION LAYOUT ============ */

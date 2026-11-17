@@ -39,6 +39,9 @@ const heading = (id: string) => {
 };
 const desktopScreens = cs.final.screens.filter((s) => !s.mobile);
 const phoneScreens = cs.final.screens.filter((s) => s.mobile);
+// Accessible name for a phone capture's scroll frame, e.g. "Final screen: admin dashboard".
+const phoneFrameName = (caption: unknown) =>
+  `Final screen: ${typeof caption === 'string' ? caption.replace(/( \(mobile\))?\.$/, '').toLowerCase() : 'phone'}`;
 ---
 
 <Base title={`${cs.title} Case Study — ${site.name}`} description={cs.description} page="upahan">
@@ -253,7 +256,7 @@ const phoneScreens = cs.final.screens.filter((s) => s.mobile);
           </div>
           <div class="gallery gallery--phones">
             {phoneScreens.map((screen) => (
-              <Figure figure={screen} />
+              <Figure figure={screen} frame={phoneFrameName(screen.caption)} />
             ))}
           </div>
 
@@ -344,6 +347,10 @@ const phoneScreens = cs.final.screens.filter((s) => s.mobile);
     font-size: clamp(56px, 11vw, 132px);
     line-height: 0.95;
     text-transform: uppercase;
+    /* Shared with the featured Work card title: it morphs between the two
+       pages. fit-content keeps both boxes hugging the text so it scales cleanly. */
+    width: fit-content;
+    view-transition-name: upahan-title;
   }
   .cs-tagline {
     margin-top: 16px;
@@ -594,9 +601,16 @@ const phoneScreens = cs.final.screens.filter((s) => s.mobile);
       grid-template-columns: 1fr 1fr;
     }
   }
+  /* On narrow phones the two captures stack (up to 300px wide, like the
+     before/after pairs) instead of shrinking side by side. */
   .gallery--phones {
     margin-top: 28px;
-    grid-template-columns: repeat(2, minmax(0, 220px));
+    grid-template-columns: minmax(0, 300px);
+  }
+  @media (min-width: 560px) {
+    .gallery--phones {
+      grid-template-columns: repeat(2, minmax(0, 220px));
+    }
   }
   @media (min-width: 768px) {
     .gallery--phones {

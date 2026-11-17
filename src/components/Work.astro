@@ -126,6 +126,10 @@ const pad = (n: number) => String(n).padStart(2, '0');
     font-size: clamp(40px, 7vw, 76px);
     line-height: 0.95;
     text-transform: uppercase;
+    /* Morphs into the case study's H1 (same name there); the only element on
+       the home page with this name. */
+    width: fit-content;
+    view-transition-name: upahan-title;
   }
   .featured__client {
     margin-top: 14px;

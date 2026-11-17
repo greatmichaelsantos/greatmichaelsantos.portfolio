@@ -38,6 +38,9 @@ const { page } = Astro.props;
     -webkit-backdrop-filter: blur(6px);
     backdrop-filter: blur(6px);
     border-bottom: 1px solid var(--rule);
+    /* Captured on its own during page transitions, so it stays put while the
+       page underneath wipes in. */
+    view-transition-name: site-nav;
   }
   .site-nav__inner {
     max-width: 1060px;
