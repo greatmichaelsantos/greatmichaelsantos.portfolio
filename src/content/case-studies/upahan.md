@@ -368,13 +368,13 @@ beforeAfter:
       before:
         file: before-dashboard-375.webp
         width: 750
-        height: 1624
-        alt: 'Old admin dashboard on a phone: a teal header, the rent-collection card, Add New Unit and Fix Requests tiles, Payment Requests and a bottom navigation bar.'
+        height: 1646
+        alt: 'Old admin dashboard on a phone, full page: a teal header, the rent-collection card, Add New Unit and Fix Requests tiles, Payment Requests, a one-week calendar and a bottom navigation bar.'
       after:
         file: after-dashboard-375.webp
         width: 750
-        height: 1624
-        alt: 'New admin dashboard on a phone: a dark teal header, the welcome line, a New Unit button, stacked KPI cards and a bottom navigation bar with count badges and a More tab.'
+        height: 4586
+        alt: 'New admin dashboard on a phone, full page: a dark teal header, the welcome line, a New Unit button, four stacked KPI cards, a rent-collection donut chart, a six-month trend chart, a month calendar, a fix-requests list and a bottom navigation bar with count badges and a More tab.'
       changed: >-
         On phones the KPI cards stack in one column, the header uses the darker teal, and the bottom navigation
         gained count badges and a More tab.
@@ -388,8 +388,8 @@ beforeAfter:
       after:
         file: after-login-375.webp
         width: 750
-        height: 1624
-        alt: 'New staff sign-in on a phone: the teal brand panel stacked above the cream sign-in form.'
+        height: 2348
+        alt: 'New staff sign-in on a phone, full page: the teal brand panel stacked above the cream form with email or phone number, password, Keep me signed in and a Sign in to dashboard button.'
       changed: On phones the two panels stack, with the teal brand panel above the sign-in form.
 
 # ---------- 7. Final result ----------
@@ -423,14 +423,14 @@ final:
     - file: after-dashboard-375.webp
       mobile: true
       width: 750
-      height: 1624
-      alt: 'Final UPahan admin dashboard on a phone, with stacked KPI cards and a bottom navigation bar.'
+      height: 4586
+      alt: 'Final UPahan admin dashboard on a phone, full page: stacked KPI cards, the rent-collection and trend charts, a calendar, fix requests and a bottom navigation bar.'
       caption: Admin dashboard (mobile).
     - file: after-login-375.webp
       mobile: true
       width: 750
-      height: 1624
-      alt: 'Final UPahan staff sign-in on a phone, with the teal brand panel above the form.'
+      height: 2348
+      alt: 'Final UPahan staff sign-in on a phone, full page: the teal brand panel above the form and its Sign in to dashboard button.'
       caption: Staff sign-in (mobile).
   accessibility:
     - title: Dialogs that manage focus

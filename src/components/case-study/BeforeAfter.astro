@@ -52,10 +52,13 @@ const { screen, before, after, changed, why, mobile = false } = Astro.props;
     letter-spacing: var(--tracking-title);
     margin-bottom: 18px;
   }
+  /* Top-aligned; each screenshot keeps its own natural height (full-page
+     phone captures differ in length), never stretched or cropped. */
   .ba__grid {
     display: grid;
     grid-template-columns: 1fr;
     gap: 20px;
+    align-items: start;
   }
   .ba--mobile .ba__grid {
     max-width: 640px;
