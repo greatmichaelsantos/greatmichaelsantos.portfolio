@@ -1,0 +1,14 @@
+# Store and check out text files with LF line endings on every OS, so the
+# working tree matches what Prettier and the Linux CI runner expect, even when
+# git's core.autocrlf is on.
+* text=auto eol=lf
+
+# Binary assets (images, fonts): never convert their bytes.
+*.webp binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.woff binary
+*.woff2 binary
