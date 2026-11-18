@@ -13,7 +13,7 @@ Live: <https://greatmichaelsantos.dev/>
 - Astro content collections (with a Zod schema) for the case-study copy
 - Self-hosted fonts via `@fontsource/archivo` and `@fontsource/jetbrains-mono`
 - Tooling: `astro check` (TypeScript), Prettier with `prettier-plugin-astro`
-- Hosting: GitHub Pages, deployed by GitHub Actions
+- Hosting: GitHub Pages, deployed by GitHub Actions, Name.com
 
 ## Folder structure
 
@@ -40,8 +40,6 @@ src/
 astro.config.mjs               site URL, base path, static output
 ```
 
-To change what the site says, edit the files in `src/data/` (home page) or
-`src/content/case-studies/upahan.md` (case study). Components only render that data.
 
 ## Prerequisites
 
