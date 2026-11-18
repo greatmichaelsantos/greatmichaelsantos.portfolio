@@ -45,6 +45,11 @@ const year = new Date().getFullYear();
       color: var(--bg);
     }
   }
+  /* Nothing to scroll back to (set by the script below). visibility keeps the
+     footer's layout steady and also takes the link out of the tab order. */
+  .to-top[data-idle] {
+    visibility: hidden;
+  }
   @media (max-width: 640px) {
     .site-footer {
       flex-direction: column;
@@ -52,3 +57,17 @@ const year = new Date().getFullYear();
     }
   }
 </style>
+
+<script>
+  // When the whole page fits on screen (e.g. the 404 page on a laptop), "Back to
+  // top" can't do anything, so hide it until the page is tall enough to scroll.
+  // Without JS it always shows, and it still works as a plain #top link.
+  const toTop = document.querySelector<HTMLElement>('.to-top');
+  if (toTop) {
+    const root = document.documentElement;
+    const update = () => toTop.toggleAttribute('data-idle', root.scrollHeight <= root.clientHeight);
+    update();
+    new ResizeObserver(update).observe(document.body);
+    window.addEventListener('resize', update);
+  }
+</script>

@@ -35,8 +35,13 @@
   box-sizing: border-box;
 }
 html {
-  scroll-behavior: smooth;
   overflow-x: clip;
+}
+/* In-page links (nav, "Back to top", TOC) glide only when motion is welcome. */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
 }
 body {
   background: var(--bg);
@@ -98,6 +103,12 @@ a {
 }
 .skip-link:focus {
   top: 12px;
+}
+/* "Back to top" moves focus here. Clicking it with a mouse shouldn't flash the
+   skip link, so only keyboard focus shows it (browsers without :focus-visible
+   keep the plain :focus rule above). */
+.skip-link:focus:not(:focus-visible) {
+  top: -100px;
 }
 
 main:focus {
@@ -282,9 +293,6 @@ section {
 
 /* ============ REDUCED MOTION ============ */
 @media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
   .js .reveal {
     transition: none;
   }

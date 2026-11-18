@@ -81,8 +81,10 @@ const canonical = new URL(Astro.url.pathname, Astro.site).href;
       });
     </script>
   </head>
-  <body id="top" class={page === 'home' ? undefined : 'revealed name-filled'}>
-    <a class="skip-link" href="#main">
+  <body class={page === 'home' ? undefined : 'revealed name-filled'}>
+    {/* id="top" is the footer's "Back to top" target. A focusable element at the very top of every page, so
+        following the link also moves keyboard focus here (Tab then continues from the top). */}
+    <a id="top" class="skip-link" href="#main">
       Skip to content
     </a>
     <Constellation />
